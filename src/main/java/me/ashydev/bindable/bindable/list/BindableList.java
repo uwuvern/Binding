@@ -21,15 +21,15 @@ import java.util.*;
 import java.util.function.UnaryOperator;
 
 public class BindableList<T> implements IBindableList<T> {
-    private final WeakReference<BindableList<T>> weakReference = new WeakReference<>(this);
+    private transient final WeakReference<BindableList<T>> weakReference = new WeakReference<>(this);
 
-    private final ActionQueue<CollectionEvent<T>> collectionChanged = new ActionQueue<>();
-    private final ActionQueue<ValueChangedEvent<Boolean>> disabledChanged = new ActionQueue<>();
+    private transient final ActionQueue<CollectionEvent<T>> collectionChanged = new ActionQueue<>();
+    private transient final ActionQueue<ValueChangedEvent<Boolean>> disabledChanged = new ActionQueue<>();
 
-    private final LockedWeakList<BindableList<T>> bindings = new LockedWeakList<>();
+    private transient final LockedWeakList<BindableList<T>> bindings = new LockedWeakList<>();
+    private transient boolean disabled;
 
     private final List<T> collection = new ArrayList<>();
-    private boolean disabled;
 
     public BindableList(Collection<T> items) {
         if (items != null)

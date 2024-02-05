@@ -23,15 +23,16 @@ import java.util.*;
 import java.util.function.UnaryOperator;
 
 public class BindableMap<K, V> implements IBindableMap<K, V> {
-    private final WeakReference<BindableMap<K, V>> weakReference = new WeakReference<>(this);
+    private transient final WeakReference<BindableMap<K, V>> weakReference = new WeakReference<>(this);
 
-    private final ActionQueue<MapEvent<K, V>> collectionChanged = new ActionQueue<>();
-    private final ActionQueue<ValueChangedEvent<Boolean>> disabledChanged = new ActionQueue<>();
+    private transient final ActionQueue<MapEvent<K, V>> collectionChanged = new ActionQueue<>();
+    private transient final ActionQueue<ValueChangedEvent<Boolean>> disabledChanged = new ActionQueue<>();
 
-    private final LockedWeakList<BindableMap<K, V>> bindings = new LockedWeakList<>();
+    private transient final LockedWeakList<BindableMap<K, V>> bindings = new LockedWeakList<>();
+    private transient boolean disabled;
 
     private final Map<K, V> map;
-    private boolean disabled;
+
 
     public BindableMap(MapType type, Map<K, V> items) {
         this.map = switch (type) {
