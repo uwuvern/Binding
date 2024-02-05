@@ -111,7 +111,10 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
 
             BindableMap<K, V> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.setDisabled(value);
         }
@@ -234,7 +237,10 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
         for (WeakReference<BindableMap<K, V>> binding : new ArrayList<>(bindings)) {
             final BindableMap<K, V> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             unbindWeakFrom(bindable);
         }
@@ -247,7 +253,10 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
         for (WeakReference<BindableMap<K, V>> binding : new ArrayList<>(bindings)) {
             final BindableMap<K, V> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             unbindFrom(bindable);
         }
@@ -332,7 +341,10 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
         for (WeakReference<BindableMap<K, V>> binding : bindings) {
             final BindableMap<K, V> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.put(key, value, appliedInstances);
         }
@@ -367,7 +379,10 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
         for (WeakReference<BindableMap<K, V>> binding : bindings) {
             final BindableMap<K, V> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.remove(key, appliedInstances);
         }
@@ -400,7 +415,10 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
         for (WeakReference<BindableMap<K, V>> binding : bindings) {
             final BindableMap<K, V> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.putAll(m, appliedInstances);
         }
@@ -430,7 +448,10 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
         for (WeakReference<BindableMap<K, V>> binding : bindings) {
             final BindableMap<K, V> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.clear(appliedInstances);
         }

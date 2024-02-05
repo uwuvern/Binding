@@ -84,14 +84,15 @@ public class Bindable<T> implements IBindable<T> {
     }
 
     protected void propagateValueChanged(Bindable<T> source, T value) {
-        gc();
-
         for (WeakReference<Bindable<T>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
             Bindable<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.set(value);
         }
@@ -144,14 +145,15 @@ public class Bindable<T> implements IBindable<T> {
     }
 
     protected void propagateDisabledChanged(Bindable<T> source, boolean value) {
-        gc();
-
         for (WeakReference<Bindable<T>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
             Bindable<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.setDisabled(value);
         }
@@ -163,16 +165,6 @@ public class Bindable<T> implements IBindable<T> {
 
         if (runOnceImmediately)
             action.invoke(new ValueChangedEvent<>(disabled, disabled));
-    }
-
-    public void gc() {
-        for (WeakReference<Bindable<T>> binding : new ArrayList<>(bindings)) {
-            if (binding.refersTo(this)) continue;
-
-            Bindable<T> bindable = binding.get();
-
-            if (bindable == null) bindings.remove(binding);
-        }
     }
 
     @Override
@@ -270,7 +262,10 @@ public class Bindable<T> implements IBindable<T> {
         for (WeakReference<Bindable<T>> binding : new ArrayList<>(bindings)) {
             Bindable<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             unbindWeakFrom(this);
         }
@@ -283,7 +278,10 @@ public class Bindable<T> implements IBindable<T> {
         for (WeakReference<Bindable<T>> binding : new ArrayList<>(bindings)) {
             Bindable<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.unbindFrom(this);
         }
@@ -385,7 +383,10 @@ public class Bindable<T> implements IBindable<T> {
             if (!binding.refersTo(source)) {
                 Bindable<T> bindable = binding.get();
 
-                if (bindable == null) continue;
+                if (bindable == null) {
+                    bindings.remove(binding);
+                    continue;
+                }
 
                 found |= bindable.checkForLease(source);
             }

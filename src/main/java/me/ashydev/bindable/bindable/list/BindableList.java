@@ -72,7 +72,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : bindings) {
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.set(index, element, appliedInstances);
         }
@@ -106,7 +109,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : bindings) {
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.add(element, appliedInstances);
         }
@@ -140,7 +146,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : bindings) {
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.clear(appliedInstances);
         }
@@ -176,7 +185,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : bindings) {
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.remove(o, appliedInstances);
         }
@@ -233,7 +245,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : bindings) {
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.addAll(c, appliedInstances);
         }
@@ -265,7 +280,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : bindings) {
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.addAll(index, c, appliedInstances);
         }
@@ -298,7 +316,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : bindings) {
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.removeAll(c, appliedInstances);
         }
@@ -333,7 +354,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : bindings) {
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.retainAll(c, appliedInstances);
         }
@@ -370,7 +394,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : bindings) {
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.add(index, element, appliedInstances);
         }
@@ -400,7 +427,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : bindings) {
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.remove(index, appliedInstances);
         }
@@ -457,7 +487,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : bindings) {
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.replaceAll(operator, appliedInstances);
         }
@@ -489,7 +522,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : bindings) {
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.sort(c, appliedInstances);
         }
@@ -526,7 +562,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : bindings) {
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.addFirst(t, appliedInstances);
         }
@@ -556,7 +595,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : bindings) {
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.addLast(t, appliedInstances);
         }
@@ -597,7 +639,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : bindings) {
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.removeFirst(appliedInstances);
         }
@@ -629,7 +674,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : bindings) {
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.removeLast(appliedInstances);
         }
@@ -706,7 +754,10 @@ public class BindableList<T> implements IBindableList<T> {
 
             BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             bindable.setDisabled(value);
         }
@@ -829,7 +880,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             final BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             unbindWeakFrom(bindable);
         }
@@ -842,7 +896,10 @@ public class BindableList<T> implements IBindableList<T> {
         for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             final BindableList<T> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             unbindFrom(bindable);
         }

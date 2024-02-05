@@ -111,12 +111,15 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
     }
 
     protected void propagateMinValueChange(RangeConstrainedBindable<T> source) {
-        gc();
-
         for (WeakReference<Bindable<T>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
             Bindable<T> bindable = binding.get();
+
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             if (bindable instanceof RangeConstrainedBindable<T> rangeConstrainedBindable) {
                 rangeConstrainedBindable.setMinValue(min, true, this);
@@ -159,12 +162,15 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
     }
 
     protected void propagateMaxValueChange(RangeConstrainedBindable<T> source) {
-        gc();
-
         for (WeakReference<Bindable<T>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
             Bindable<T> bindable = binding.get();
+
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             if (bindable instanceof RangeConstrainedBindable<T> rangeConstrainedBindable) {
                 rangeConstrainedBindable.setMaxValue(max, true, this);
@@ -224,12 +230,15 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
     }
 
     protected void propagateDefaultMinValueChange(RangeConstrainedBindable<T> source) {
-        gc();
-
         for (WeakReference<Bindable<T>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
             Bindable<T> bindable = binding.get();
+
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             if (bindable instanceof RangeConstrainedBindable<T> rangeConstrainedBindable) {
                 rangeConstrainedBindable.setDefaultMin(defaultMin);
@@ -255,12 +264,15 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
     }
 
     protected void propagateDefaultMaxValueChange(RangeConstrainedBindable<T> source) {
-        gc();
-
         for (WeakReference<Bindable<T>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
             Bindable<T> bindable = binding.get();
+
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             if (bindable instanceof RangeConstrainedBindable<T> rangeConstrainedBindable) {
                 rangeConstrainedBindable.setDefaultMax(defaultMax);

@@ -106,14 +106,15 @@ public abstract class PrecisionConstrainedBindable<V extends Number, T extends N
     }
 
     protected void propagatePrecisionChanged(T previous, T current, PrecisionConstrainedBindable<V, T> source) {
-        gc();
-
         for (WeakReference<Bindable<V>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
             final Bindable<V> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             if (bindable instanceof PrecisionConstrainedBindable<?, ?>) {
                 final PrecisionConstrainedBindable<V, T> precisionBindable = (PrecisionConstrainedBindable<V, T>) bindable;
@@ -153,14 +154,15 @@ public abstract class PrecisionConstrainedBindable<V extends Number, T extends N
     }
 
     protected void propagateDefaultPrecisionChanged(T previous, T current, PrecisionConstrainedBindable<V, T> source) {
-        gc();
-
         for (WeakReference<Bindable<V>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
             final Bindable<V> bindable = binding.get();
 
-            if (bindable == null) continue;
+            if (bindable == null) {
+                bindings.remove(binding);
+                continue;
+            }
 
             if (bindable instanceof PrecisionConstrainedBindable<?, ?>) {
                 final PrecisionConstrainedBindable<V, T> precisionBindable = (PrecisionConstrainedBindable<V, T>) bindable;
