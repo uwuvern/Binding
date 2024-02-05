@@ -40,8 +40,8 @@ public abstract class PrecisionConstrainedBindable<V extends Number, T extends N
         throw new IllegalArgumentException(String.format("Invalid type for precision %s. must be one of %s", precision.getClass().getSimpleName(), VALID_PRECISION_TYPES));
     }
 
-    private final ActionQueue<ValueChangedEvent<T>> precisionChanged = new ActionQueue<>();
-    private final ActionQueue<ValueChangedEvent<T>> defaultPrecisionChanged = new ActionQueue<>();
+    private transient final ActionQueue<ValueChangedEvent<T>> precisionChanged = new ActionQueue<>();
+    private transient final ActionQueue<ValueChangedEvent<T>> defaultPrecisionChanged = new ActionQueue<>();
 
     private T precision, defaultPrecision;
 

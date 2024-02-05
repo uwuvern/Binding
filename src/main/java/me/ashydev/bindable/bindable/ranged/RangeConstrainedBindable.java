@@ -36,11 +36,11 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
         }
     }
 
-    private final ActionQueue<ValueChangedEvent<T>> minValueChanged = new ActionQueue<>();
-    private final ActionQueue<ValueChangedEvent<T>> maxValueChanged = new ActionQueue<>();
+    private transient final ActionQueue<ValueChangedEvent<T>> minValueChanged = new ActionQueue<>();
+    private transient final ActionQueue<ValueChangedEvent<T>> maxValueChanged = new ActionQueue<>();
 
-    private final ActionQueue<ValueChangedEvent<T>> defaultMinValueChanged = new ActionQueue<>();
-    private final ActionQueue<ValueChangedEvent<T>> defaultMaxValueChanged = new ActionQueue<>();
+    private transient final ActionQueue<ValueChangedEvent<T>> defaultMinValueChanged = new ActionQueue<>();
+    private transient final ActionQueue<ValueChangedEvent<T>> defaultMaxValueChanged = new ActionQueue<>();
 
     private T min, max;
     private T defaultMin, defaultMax;
