@@ -71,15 +71,10 @@ public abstract class RangeConstrainedBindable<T extends Number> extends Bindabl
     }
 
     @Override
-    public T getMax() {
-        return max;
-    }
-
-    @Override
     public void setMin(T min) {
         if (min.equals(this.min)) return;
 
-        setMinValue(value, true, this);
+        setMinValue(min, true, this);
     }
 
     protected void setMinValue(T minValue, boolean updateCurrentValue, RangeConstrainedBindable<T> source) {
@@ -108,7 +103,7 @@ public abstract class RangeConstrainedBindable<T extends Number> extends Bindabl
             minValueChanged.execute(new ValueChangedEvent<>(beforePropagation, min));
     }
 
-    protected  void triggerMinValueChange(RangeConstrainedBindable<T> source, boolean propagateToBindings) {
+    protected void triggerMinValueChange(RangeConstrainedBindable<T> source, boolean propagateToBindings) {
         triggerMinValueChange(min, source, propagateToBindings);
     }
 
@@ -119,17 +114,21 @@ public abstract class RangeConstrainedBindable<T extends Number> extends Bindabl
             Bindable<T> bindable = binding.get();
 
             if (bindable instanceof RangeConstrainedBindable<T> rangeConstrainedBindable) {
-                rangeConstrainedBindable.setMinValue(min, false, this);
+                rangeConstrainedBindable.setMinValue(min, true, this);
             }
         }
     }
 
+    @Override
+    public T getMax() {
+        return max;
+    }
 
     @Override
     public void setMax(T max) {
         if (max.equals(this.max)) return;
 
-        setMaxValue(value, true, this);
+        setMaxValue(max, true, this);
     }
 
     protected void setMaxValue(T maxValue, boolean updateCurrentValue, RangeConstrainedBindable<T> source) {
@@ -138,9 +137,8 @@ public abstract class RangeConstrainedBindable<T extends Number> extends Bindabl
         this.max = maxValue;
         triggerMaxValueChange(previous, source, true);
 
-        if (updateCurrentValue) {
+        if (updateCurrentValue)
             set(value);
-        }
     }
 
     protected void triggerMaxValueChange(T beforePropagation, RangeConstrainedBindable<T> source, boolean propagateToBindings) {
@@ -162,7 +160,7 @@ public abstract class RangeConstrainedBindable<T extends Number> extends Bindabl
             Bindable<T> bindable = binding.get();
 
             if (bindable instanceof RangeConstrainedBindable<T> rangeConstrainedBindable) {
-                rangeConstrainedBindable.setMaxValue(max, false, this);
+                rangeConstrainedBindable.setMaxValue(max, true, this);
             }
         }
     }
@@ -203,7 +201,7 @@ public abstract class RangeConstrainedBindable<T extends Number> extends Bindabl
 
     @Override
     public void setDefaultMin(T min) {
-        if (min.equals(this.defaultMin)) return;
+        if (min.equals(this.min)) return;
 
         triggerDefaultMinValueChange(this, true, min);
     }
@@ -232,7 +230,7 @@ public abstract class RangeConstrainedBindable<T extends Number> extends Bindabl
 
     @Override
     public void setDefaultMax(T max) {
-        if (max.equals(this.defaultMax)) return;
+        if (max.equals(this.max)) return;
 
         triggerDefaultMaxValueChange(this, true, max);
     }

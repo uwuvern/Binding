@@ -75,8 +75,6 @@ public class Bindable<T> implements IBindable<T> {
     }
 
     private void triggerValueChanged(T beforePropagation, Bindable<T> source, T value, boolean propagate, boolean bypassChecks) {
-        triggerChange();
-
         if (propagate)
             propagateValueChanged(source, value);
 
@@ -84,7 +82,10 @@ public class Bindable<T> implements IBindable<T> {
             valueChanged.execute(new ValueChangedEvent<>(beforePropagation, value));
     }
 
-    protected void triggerChange() { }
+    protected void triggerChange() {
+        triggerValueChanged(value, this, value, false, false);
+        triggerDisabledChange(disabled, this, false, false);
+    }
 
     private void propagateValueChanged(Bindable<T> source, T value) {
         for (WeakReference<Bindable<T>> binding : bindings) {
