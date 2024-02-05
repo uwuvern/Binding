@@ -16,6 +16,14 @@ public class ValueChangedEvent<T> {
         this.value = value;
     }
 
+    public T getOld() {
+        return old;
+    }
+
+    public T getNew() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return "ValueChangedEvent{" +
