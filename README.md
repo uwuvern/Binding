@@ -10,7 +10,7 @@ You can get the latest version in the releases page, or you can use jitpack to g
 If needed here's a reference to the release page [here](https://github.com/uwuvern/binding/releases)
 ### Gradle
 
-#### Groovy
+### Groovy
 First add the repository
 ```groovy
 repositories {
@@ -25,7 +25,7 @@ dependencies {
 }
 ```
 
-#### Kotlin
+### Kotlin
 First add the repository
 ```kotlin
 repositories {
@@ -59,7 +59,7 @@ Then add the dependency
 ```
 
 # Quick Notice
-## Adapation
+## Adaptation
 this is a code adaption in java of ppy's bindable implementation in c#, for the source of the original code please visit [here](https://github.com/ppy/osu-framework/blob/master/osu.Framework/Bindables/Bindable.cs), this version is aimed at rewriting it to have more features, and to work with java, another commonly used language similar to c#, all credit of the original implementation goes to ppy, and the osu-framework contributors.
 
 # Contributing
