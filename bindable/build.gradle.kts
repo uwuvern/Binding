@@ -7,9 +7,22 @@
 
 plugins {
     id("java")
+    `maven-publish`
 }
 
-group = "com.github.uwuvern"
+group = "me.ashydev.bindable"
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = properties["groupId"].toString()
+            artifactId = properties["artifactId"].toString()
+            version = properties["version"].toString()
+
+            from(components["java"])
+        }
+    }
+}
 
 repositories {
     mavenCentral()
