@@ -83,6 +83,8 @@ public class StrongBindable<T> extends Bindable<T> implements IHasDefault<T> {
     }
 
     private void propagateDefaultChanged(StrongBindable<T> source, T value) {
+        gc();
+
         for (WeakReference<Bindable<T>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 

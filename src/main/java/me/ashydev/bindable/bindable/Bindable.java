@@ -16,6 +16,8 @@ import me.ashydev.bindable.action.queue.ActionQueue;
 import me.ashydev.bindable.event.ValueChangedEvent;
 import me.ashydev.bindable.reference.LockedWeakList;
 
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -26,7 +28,7 @@ public class Bindable<T> implements IBindable<T> {
     protected transient final ActionQueue<ValueChangedEvent<LeaseState>> leaseChanged = new ActionQueue<>();
     protected transient final ActionQueue<ValueChangedEvent<Boolean>> disabledChanged = new ActionQueue<>();
 
-    protected transient final LockedWeakList<Bindable<T>> bindings = new LockedWeakList<>();
+    public transient final LockedWeakList<Bindable<T>> bindings = new LockedWeakList<>();
 
     protected transient Class<T> type;
 
@@ -82,6 +84,8 @@ public class Bindable<T> implements IBindable<T> {
     }
 
     protected void propagateValueChanged(Bindable<T> source, T value) {
+        gc();
+
         for (WeakReference<Bindable<T>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
@@ -140,6 +144,8 @@ public class Bindable<T> implements IBindable<T> {
     }
 
     protected void propagateDisabledChanged(Bindable<T> source, boolean value) {
+        gc();
+
         for (WeakReference<Bindable<T>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
@@ -157,6 +163,16 @@ public class Bindable<T> implements IBindable<T> {
 
         if (runOnceImmediately)
             action.invoke(new ValueChangedEvent<>(disabled, disabled));
+    }
+
+    public void gc() {
+        for (WeakReference<Bindable<T>> binding : new ArrayList<>(bindings)) {
+            if (binding.refersTo(this)) continue;
+
+            Bindable<T> bindable = binding.get();
+
+            if (bindable == null) bindings.remove(binding);
+        }
     }
 
     @Override

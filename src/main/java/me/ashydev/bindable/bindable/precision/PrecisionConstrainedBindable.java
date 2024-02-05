@@ -106,6 +106,8 @@ public abstract class PrecisionConstrainedBindable<V extends Number, T extends N
     }
 
     protected void propagatePrecisionChanged(T previous, T current, PrecisionConstrainedBindable<V, T> source) {
+        gc();
+
         for (WeakReference<Bindable<V>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
@@ -151,6 +153,8 @@ public abstract class PrecisionConstrainedBindable<V extends Number, T extends N
     }
 
     protected void propagateDefaultPrecisionChanged(T previous, T current, PrecisionConstrainedBindable<V, T> source) {
+        gc();
+
         for (WeakReference<Bindable<V>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 

@@ -111,6 +111,8 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
     }
 
     protected void propagateMinValueChange(RangeConstrainedBindable<T> source) {
+        gc();
+
         for (WeakReference<Bindable<T>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
@@ -157,6 +159,8 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
     }
 
     protected void propagateMaxValueChange(RangeConstrainedBindable<T> source) {
+        gc();
+
         for (WeakReference<Bindable<T>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
@@ -220,6 +224,8 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
     }
 
     protected void propagateDefaultMinValueChange(RangeConstrainedBindable<T> source) {
+        gc();
+
         for (WeakReference<Bindable<T>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
@@ -249,6 +255,8 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
     }
 
     protected void propagateDefaultMaxValueChange(RangeConstrainedBindable<T> source) {
+        gc();
+
         for (WeakReference<Bindable<T>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
