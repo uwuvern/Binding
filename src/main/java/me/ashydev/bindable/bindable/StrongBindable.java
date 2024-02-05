@@ -16,7 +16,7 @@ import me.ashydev.bindable.types.IHasDefault;
 import java.lang.ref.WeakReference;
 
 public class StrongBindable<T> extends Bindable<T> implements IHasDefault<T> {
-    protected final ActionQueue<ValueChangedEvent<T>> defaultChanged = new ActionQueue<>();
+    protected transient final ActionQueue<ValueChangedEvent<T>> defaultChanged = new ActionQueue<>();
     protected T defaultValue;
 
     public StrongBindable() {
