@@ -20,18 +20,19 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class Bindable<T> implements IBindable<T> {
-    protected final WeakReference<Bindable<T>> weakReference = new WeakReference<>(this);
+    protected transient final WeakReference<Bindable<T>> weakReference = new WeakReference<>(this);
 
-    protected final ActionQueue<ValueChangedEvent<T>> valueChanged = new ActionQueue<>();
-    protected final ActionQueue<ValueChangedEvent<LeaseState>> leaseChanged = new ActionQueue<>();
-    protected final ActionQueue<ValueChangedEvent<Boolean>> disabledChanged = new ActionQueue<>();
+    protected transient final ActionQueue<ValueChangedEvent<T>> valueChanged = new ActionQueue<>();
+    protected transient final ActionQueue<ValueChangedEvent<LeaseState>> leaseChanged = new ActionQueue<>();
+    protected transient final ActionQueue<ValueChangedEvent<Boolean>> disabledChanged = new ActionQueue<>();
 
-    protected final LockedWeakList<Bindable<T>> bindings = new LockedWeakList<>();
+    protected transient final LockedWeakList<Bindable<T>> bindings = new LockedWeakList<>();
 
-    protected Class<T> type;
+    protected transient Class<T> type;
+
+    protected transient boolean disabled;
 
     protected T value;
-    protected boolean disabled;
 
     public Bindable() {
         this(null);
@@ -67,7 +68,7 @@ public class Bindable<T> implements IBindable<T> {
         triggerValueChanged(oldValue, source != null ? source : this, value, true, bypassChecks);
     }
 
-    private void triggerValueChanged(T beforePropagation, Bindable<T> source, T value, boolean propagate, boolean bypassChecks) {
+    protected void triggerValueChanged(T beforePropagation, Bindable<T> source, T value, boolean propagate, boolean bypassChecks) {
         if (propagate)
             propagateValueChanged(source, value);
 
@@ -80,7 +81,7 @@ public class Bindable<T> implements IBindable<T> {
         triggerDisabledChange(disabled, this, false, false);
     }
 
-    private void propagateValueChanged(Bindable<T> source, T value) {
+    protected void propagateValueChanged(Bindable<T> source, T value) {
         for (WeakReference<Bindable<T>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
@@ -138,7 +139,7 @@ public class Bindable<T> implements IBindable<T> {
             disabledChanged.execute(new ValueChangedEvent<>(beforePropagation, disabled));
     }
 
-    private void propagateDisabledChanged(Bindable<T> source, boolean value) {
+    protected void propagateDisabledChanged(Bindable<T> source, boolean value) {
         for (WeakReference<Bindable<T>> binding : bindings) {
             if (binding.refersTo(source)) continue;
 
@@ -224,7 +225,7 @@ public class Bindable<T> implements IBindable<T> {
         return this;
     }
 
-    private void refer(Bindable<T> bindable) {
+    protected void refer(Bindable<T> bindable) {
         WeakReference<Bindable<T>> reference = bindable.weakReference;
 
         if (bindings.contains(reference))
@@ -233,7 +234,7 @@ public class Bindable<T> implements IBindable<T> {
         bindings.add(reference);
     }
 
-    private void unrefer(Bindable<T> bindable) {
+    protected void unrefer(Bindable<T> bindable) {
         WeakReference<Bindable<T>> reference = bindable.weakReference;
 
         if (!bindings.contains(reference))
