@@ -7,9 +7,10 @@
 
 plugins {
     id("java")
+    id("maven")
 }
 
-group = "me.ashydev.bindable"
+group = "com.github.uwuvern"
 
 repositories {
     mavenCentral()
