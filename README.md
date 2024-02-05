@@ -1,0 +1,2 @@
+# Adapation
+this is a code adaption in java of ppy's bindable implementation in c#, for the source of the original code please visit [here](https://github.com/ppy/osu-framework/blob/master/osu.Framework/Bindables/Bindable.cs)
