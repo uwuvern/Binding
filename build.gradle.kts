@@ -11,7 +11,7 @@ plugins {
 }
 
 group = "me.ashydev"
-version = "1.0.166"
+version = "1.0.167"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
