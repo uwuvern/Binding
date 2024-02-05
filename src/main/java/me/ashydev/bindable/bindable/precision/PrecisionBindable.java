@@ -7,6 +7,9 @@
 
 package me.ashydev.bindable.bindable.precision;
 
+import me.ashydev.bindable.IBindable;
+import me.ashydev.bindable.bindable.Bindable;
+
 public class PrecisionBindable<T extends Number> extends PrecisionConstrainedBindable<T, Float> {
     public PrecisionBindable(T value, float precision) {
         super(value, precision);
@@ -14,5 +17,14 @@ public class PrecisionBindable<T extends Number> extends PrecisionConstrainedBin
 
     public PrecisionBindable(float precision) {
         super(precision);
+    }
+
+    public PrecisionBindable() {
+        super(0.01f);
+    }
+
+    @Override
+    public PrecisionBindable<T> createInstance() {
+        return new PrecisionBindable<>();
     }
 }

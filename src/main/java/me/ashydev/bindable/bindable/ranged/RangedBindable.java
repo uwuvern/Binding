@@ -7,6 +7,9 @@
 
 package me.ashydev.bindable.bindable.ranged;
 
+import me.ashydev.bindable.bindable.Bindable;
+import me.ashydev.bindable.bindable.precision.PrecisionBindable;
+
 public class RangedBindable<T extends Number> extends RangeConstrainedBindable<T> {
     public RangedBindable(T value, T min, T max) {
         super(value, min, max);
@@ -14,5 +17,10 @@ public class RangedBindable<T extends Number> extends RangeConstrainedBindable<T
 
     public RangedBindable(T min, T max) {
         super(min, max);
+    }
+
+    @Override
+    public RangedBindable<T> createInstance() {
+        return new RangedBindable<>(getMin(), getMax());
     }
 }
