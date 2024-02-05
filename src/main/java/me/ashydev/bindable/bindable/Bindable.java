@@ -84,7 +84,7 @@ public class Bindable<T> implements IBindable<T> {
     }
 
     protected void propagateValueChanged(Bindable<T> source, T value) {
-        for (WeakReference<Bindable<T>> binding : bindings) {
+        for (WeakReference<Bindable<T>> binding : new ArrayList<>(bindings)) {
             if (binding.refersTo(source)) continue;
 
             Bindable<T> bindable = binding.get();
@@ -145,7 +145,7 @@ public class Bindable<T> implements IBindable<T> {
     }
 
     protected void propagateDisabledChanged(Bindable<T> source, boolean value) {
-        for (WeakReference<Bindable<T>> binding : bindings) {
+        for (WeakReference<Bindable<T>> binding : new ArrayList<>(bindings)) {
             if (binding.refersTo(source)) continue;
 
             Bindable<T> bindable = binding.get();
@@ -379,7 +379,7 @@ public class Bindable<T> implements IBindable<T> {
 
         boolean found = false;
 
-        for (WeakReference<Bindable<T>> binding : bindings) {
+        for (WeakReference<Bindable<T>> binding : new ArrayList<>(bindings)) {
             if (!binding.refersTo(source)) {
                 Bindable<T> bindable = binding.get();
 

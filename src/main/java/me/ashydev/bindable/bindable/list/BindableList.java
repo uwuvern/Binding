@@ -69,7 +69,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         T previous = collection.set(index, element);
 
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             BindableList<T> bindable = binding.get();
 
             if (bindable == null) {
@@ -106,7 +106,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         collection.add(element);
 
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             BindableList<T> bindable = binding.get();
 
             if (bindable == null) {
@@ -143,7 +143,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         collection.clear();
 
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             BindableList<T> bindable = binding.get();
 
             if (bindable == null) {
@@ -182,7 +182,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         T removed = collection.remove(index);
 
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             BindableList<T> bindable = binding.get();
 
             if (bindable == null) {
@@ -242,7 +242,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         boolean changed = collection.addAll(c);
 
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             BindableList<T> bindable = binding.get();
 
             if (bindable == null) {
@@ -277,7 +277,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         boolean changed = collection.addAll(index, c);
 
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             BindableList<T> bindable = binding.get();
 
             if (bindable == null) {
@@ -313,7 +313,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         boolean changed = collection.removeAll(c);
 
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             BindableList<T> bindable = binding.get();
 
             if (bindable == null) {
@@ -351,7 +351,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         boolean changed = collection.retainAll(c);
 
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             BindableList<T> bindable = binding.get();
 
             if (bindable == null) {
@@ -391,7 +391,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         collection.add(index, element);
 
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             BindableList<T> bindable = binding.get();
 
             if (bindable == null) {
@@ -424,7 +424,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         T removed = collection.remove(index);
 
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             BindableList<T> bindable = binding.get();
 
             if (bindable == null) {
@@ -484,7 +484,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         collection.replaceAll(operator);
 
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             BindableList<T> bindable = binding.get();
 
             if (bindable == null) {
@@ -519,7 +519,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         collection.sort(c);
 
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             BindableList<T> bindable = binding.get();
 
             if (bindable == null) {
@@ -559,7 +559,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         collection.addFirst(t);
 
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             BindableList<T> bindable = binding.get();
 
             if (bindable == null) {
@@ -592,7 +592,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         collection.add(t);
 
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             BindableList<T> bindable = binding.get();
 
             if (bindable == null) {
@@ -636,7 +636,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         T removed = collection.removeFirst();
 
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             BindableList<T> bindable = binding.get();
 
             if (bindable == null) {
@@ -671,7 +671,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         T removed = collection.removeLast();
 
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             BindableList<T> bindable = binding.get();
 
             if (bindable == null) {
@@ -749,7 +749,7 @@ public class BindableList<T> implements IBindableList<T> {
     }
 
     protected void propagateDisabledChanged(BindableList<T> source, boolean value) {
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             if (binding.refersTo(source)) continue;
 
             BindableList<T> bindable = binding.get();

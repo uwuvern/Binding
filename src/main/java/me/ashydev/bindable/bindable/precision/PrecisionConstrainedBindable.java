@@ -16,6 +16,7 @@ import me.ashydev.bindable.event.ValueChangedEvent;
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class PrecisionConstrainedBindable<V extends Number, T extends Number> extends StrongBindable<V> implements IPrecision<T> {
@@ -106,7 +107,7 @@ public abstract class PrecisionConstrainedBindable<V extends Number, T extends N
     }
 
     protected void propagatePrecisionChanged(T previous, T current, PrecisionConstrainedBindable<V, T> source) {
-        for (WeakReference<Bindable<V>> binding : bindings) {
+        for (WeakReference<Bindable<V>> binding : new ArrayList<>(bindings)) {
             if (binding.refersTo(source)) continue;
 
             final Bindable<V> bindable = binding.get();
@@ -154,7 +155,7 @@ public abstract class PrecisionConstrainedBindable<V extends Number, T extends N
     }
 
     protected void propagateDefaultPrecisionChanged(T previous, T current, PrecisionConstrainedBindable<V, T> source) {
-        for (WeakReference<Bindable<V>> binding : bindings) {
+        for (WeakReference<Bindable<V>> binding : new ArrayList<>(bindings)) {
             if (binding.refersTo(source)) continue;
 
             final Bindable<V> bindable = binding.get();

@@ -14,6 +14,7 @@ import me.ashydev.bindable.event.ValueChangedEvent;
 import me.ashydev.bindable.types.IHasDefault;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 public class StrongBindable<T> extends Bindable<T> implements IHasDefault<T> {
     protected transient final ActionQueue<ValueChangedEvent<T>> defaultChanged = new ActionQueue<>();
@@ -83,7 +84,7 @@ public class StrongBindable<T> extends Bindable<T> implements IHasDefault<T> {
     }
 
     private void propagateDefaultChanged(StrongBindable<T> source, T value) {
-        for (WeakReference<Bindable<T>> binding : bindings) {
+        for (WeakReference<Bindable<T>> binding : new ArrayList<>(bindings)) {
             if (binding.refersTo(source)) continue;
 
             Bindable<T> bindable = binding.get();

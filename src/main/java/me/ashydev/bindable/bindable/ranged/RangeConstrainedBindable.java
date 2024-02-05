@@ -15,6 +15,7 @@ import me.ashydev.bindable.bindable.StrongBindable;
 import me.ashydev.bindable.event.ValueChangedEvent;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 public abstract class RangeConstrainedBindable<T extends Number> extends StrongBindable<T> implements IMinMax<T> {
     @SuppressWarnings("unchecked")
@@ -111,7 +112,7 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
     }
 
     protected void propagateMinValueChange(RangeConstrainedBindable<T> source) {
-        for (WeakReference<Bindable<T>> binding : bindings) {
+        for (WeakReference<Bindable<T>> binding : new ArrayList<>(bindings)) {
             if (binding.refersTo(source)) continue;
 
             Bindable<T> bindable = binding.get();
@@ -162,7 +163,7 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
     }
 
     protected void propagateMaxValueChange(RangeConstrainedBindable<T> source) {
-        for (WeakReference<Bindable<T>> binding : bindings) {
+        for (WeakReference<Bindable<T>> binding : new ArrayList<>(bindings)) {
             if (binding.refersTo(source)) continue;
 
             Bindable<T> bindable = binding.get();
@@ -230,7 +231,7 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
     }
 
     protected void propagateDefaultMinValueChange(RangeConstrainedBindable<T> source) {
-        for (WeakReference<Bindable<T>> binding : bindings) {
+        for (WeakReference<Bindable<T>> binding : new ArrayList<>(bindings)) {
             if (binding.refersTo(source)) continue;
 
             Bindable<T> bindable = binding.get();
@@ -264,7 +265,7 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
     }
 
     protected void propagateDefaultMaxValueChange(RangeConstrainedBindable<T> source) {
-        for (WeakReference<Bindable<T>> binding : bindings) {
+        for (WeakReference<Bindable<T>> binding : new ArrayList<>(bindings)) {
             if (binding.refersTo(source)) continue;
 
             Bindable<T> bindable = binding.get();

@@ -106,7 +106,7 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
     }
 
     private void propagateDisabledChanged(BindableMap<K, V> source, boolean value) {
-        for (WeakReference<BindableMap<K, V>> binding : bindings) {
+        for (WeakReference<BindableMap<K, V>> binding : new ArrayList<>(bindings)) {
             if (binding.refersTo(source)) continue;
 
             BindableMap<K, V> bindable = binding.get();
@@ -338,7 +338,7 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
 
         MapEvent.Type type = oldValue == null ? MapEvent.Type.ADD : MapEvent.Type.REPLACE;
 
-        for (WeakReference<BindableMap<K, V>> binding : bindings) {
+        for (WeakReference<BindableMap<K, V>> binding : new ArrayList<>(bindings)) {
             final BindableMap<K, V> bindable = binding.get();
 
             if (bindable == null) {
@@ -376,7 +376,7 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
 
         V oldValue = map.remove(key);
 
-        for (WeakReference<BindableMap<K, V>> binding : bindings) {
+        for (WeakReference<BindableMap<K, V>> binding : new ArrayList<>(bindings)) {
             final BindableMap<K, V> bindable = binding.get();
 
             if (bindable == null) {
@@ -412,7 +412,7 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
 
         map.putAll(m);
 
-        for (WeakReference<BindableMap<K, V>> binding : bindings) {
+        for (WeakReference<BindableMap<K, V>> binding : new ArrayList<>(bindings)) {
             final BindableMap<K, V> bindable = binding.get();
 
             if (bindable == null) {
@@ -445,7 +445,7 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
 
         map.clear();
 
-        for (WeakReference<BindableMap<K, V>> binding : bindings) {
+        for (WeakReference<BindableMap<K, V>> binding : new ArrayList<>(bindings)) {
             final BindableMap<K, V> bindable = binding.get();
 
             if (bindable == null) {
