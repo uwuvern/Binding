@@ -819,7 +819,7 @@ public class BindableList<T> implements IBindableList<T> {
 
     @Override
     public void unbindWeak() {
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             final BindableList<T> bindable = binding.get();
 
             if (bindable == null) continue;
@@ -832,7 +832,7 @@ public class BindableList<T> implements IBindableList<T> {
 
     @Override
     public void unbindBindings() {
-        for (WeakReference<BindableList<T>> binding : bindings) {
+        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
             final BindableList<T> bindable = binding.get();
 
             if (bindable == null) continue;

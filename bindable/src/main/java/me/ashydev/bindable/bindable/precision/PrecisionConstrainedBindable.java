@@ -22,7 +22,7 @@ public abstract class PrecisionConstrainedBindable<V extends Number, T extends N
         int precisionValue = (int) Math.log10(1.0 / precision.doubleValue());
 
         final BigDecimal value = BigDecimal.valueOf(truncated.doubleValue())
-                .setScale(precisionValue, RoundingMode.CEILING);
+                .setScale(precisionValue, RoundingMode.HALF_UP);
 
         if (precision instanceof Float)
             return (V) (Number) value.floatValue();

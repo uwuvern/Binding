@@ -10,6 +10,7 @@ import me.ashydev.bindable.event.ValueChangedEvent;
 import me.ashydev.bindable.reference.LockedWeakList;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 public class Bindable<T> implements IBindable<T> {
     protected final WeakReference<Bindable<T>> weakReference = new WeakReference<>(this);
@@ -21,6 +22,8 @@ public class Bindable<T> implements IBindable<T> {
 
     protected final LockedWeakList<Bindable<T>> bindings = new LockedWeakList<>();
 
+    protected Class<T> type;
+
     protected T value, defaultValue;
     protected boolean disabled;
 
@@ -29,6 +32,8 @@ public class Bindable<T> implements IBindable<T> {
     }
 
     public Bindable(T defaultValue) {
+        if (defaultValue != null) this.type = (Class<T>) defaultValue.getClass();
+
         this.value = defaultValue;
         this.defaultValue = defaultValue;
 
@@ -36,8 +41,8 @@ public class Bindable<T> implements IBindable<T> {
     }
 
     public Bindable(T value, T defaultValue) {
+        this(defaultValue);
         this.value = value;
-        this.defaultValue = defaultValue;
 
         this.disabled = false;
     }
@@ -274,7 +279,7 @@ public class Bindable<T> implements IBindable<T> {
     public IBindable<T> weakBind(IBindable<T> other) {
         if (!(other instanceof Bindable<T> bindable)) return null;
 
-        bindable.refer(bindable);
+        bindable.refer(this);
 
         return this;
     }
@@ -306,7 +311,7 @@ public class Bindable<T> implements IBindable<T> {
 
     @Override
     public void unbindWeak() {
-        for (WeakReference<Bindable<T>> binding : bindings) {
+        for (WeakReference<Bindable<T>> binding : new ArrayList<>(bindings)) {
             Bindable<T> bindable = binding.get();
 
             if (bindable == null) continue;
@@ -319,7 +324,7 @@ public class Bindable<T> implements IBindable<T> {
 
     @Override
     public void unbindBindings() {
-        for (WeakReference<Bindable<T>> binding : bindings) {
+        for (WeakReference<Bindable<T>> binding : new ArrayList<>(bindings)) {
             Bindable<T> bindable = binding.get();
 
             if (bindable == null) continue;
@@ -378,13 +383,18 @@ public class Bindable<T> implements IBindable<T> {
     }
 
     @Override
-    public ILeasedBindable<T> begin(boolean revertValueOnReturn) {
+    public LeasedBindable<T> begin(boolean revertValueOnReturn) {
         if (checkForLease(this))
             throw new IllegalStateException(String.format("Attempted to lease %s, but it was already leased.", this.getClass().getSimpleName()));
 
         leasedBindable = new LeasedBindable<>(this, revertValueOnReturn);
 
         return leasedBindable;
+    }
+
+    @Override
+    public LeasedBindable<T> begin() {
+        return begin(true);
     }
 
     @Override
@@ -426,5 +436,13 @@ public class Bindable<T> implements IBindable<T> {
         }
 
         return found;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Class<T> getType() {
+        if (type == null && value != null)
+            type = (Class<T>) value.getClass();
+
+        return type;
     }
 }

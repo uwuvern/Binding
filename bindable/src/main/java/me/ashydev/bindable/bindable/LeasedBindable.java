@@ -61,11 +61,19 @@ public class LeasedBindable<T> extends Bindable<T> implements ILeasedBindable<T>
     }
 
     @Override
+    public void end() {
+        if (source == null)
+            throw new IllegalStateException(String.format("Cannot end a %s that has not been leased.", getClass().getSimpleName()));
+
+        unbind();
+    }
+
+    @Override
     public void set(T value) {
         if (source != null)
             checkValid();
 
-        if (defaultValue.equals(value)) return;
+        if (this.value != null && this.value.equals(value)) return;
 
         updateDefaultValue(value, true, null);
     }
@@ -73,8 +81,20 @@ public class LeasedBindable<T> extends Bindable<T> implements ILeasedBindable<T>
     @Override
     public void unbind() {
         if (source != null && !hasBeenReturned) {
+            if (revertValueOnReturn) set(valueBeforeLease);
 
+            disabled = disabledBeforeLease;
+
+            source.end(this);
+            hasBeenReturned = true;
         }
+
+        super.unbind();
+    }
+
+    @Override
+    public LeasedBindable<T> createInstance() {
+        return new LeasedBindable<>();
     }
 
     private void checkValid() {

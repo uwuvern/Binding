@@ -9,6 +9,25 @@ import me.ashydev.bindable.event.ValueChangedEvent;
 import java.lang.ref.WeakReference;
 
 public abstract class RangeConstrainedBindable<T extends Number> extends Bindable<T> implements IMinMax<T> {
+    @SuppressWarnings("unchecked")
+    public static <T extends Number> T convert(double input, Class<? extends T> type) {
+        if (type == Integer.class) {
+            return (T) Integer.valueOf((int) input);
+        } else if (type == Long.class) {
+            return (T) Long.valueOf((long) input);
+        } else if (type == Float.class) {
+            return (T) Float.valueOf((float) input);
+        } else if (type == Double.class) {
+            return (T) Double.valueOf(input);
+        } else if (type == Short.class) {
+            return (T) Short.valueOf((short) input);
+        } else if (type == Byte.class) {
+            return (T) Byte.valueOf((byte) input);
+        } else {
+            throw new IllegalArgumentException("Unsupported number type: " + type);
+        }
+    }
+
     private final ActionQueue<ValueChangedEvent<T>> minValueChanged = new ActionQueue<>();
     private final ActionQueue<ValueChangedEvent<T>> maxValueChanged = new ActionQueue<>();
 
@@ -329,12 +348,11 @@ public abstract class RangeConstrainedBindable<T extends Number> extends Bindabl
         return (RangeConstrainedBindable<T>) super.getWeakCopy();
     }
 
-    @SuppressWarnings("unchecked")
     protected T clampValue(T value) {
         double min = getMin().doubleValue();
         double max = getMax().doubleValue();
 
-        return (T) (Number) Math.min(Math.max(value.doubleValue(), min), max);
+        return convert(Math.min(Math.max(value.doubleValue(), min), max), type);
     }
 
     protected boolean isValidRange(T min, T max) {

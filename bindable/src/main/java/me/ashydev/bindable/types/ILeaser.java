@@ -9,7 +9,7 @@ public interface ILeaser<T> {
 
     T begin(boolean revertValueOnReturn);
     default T begin() {
-        return begin(false);
+        return begin(true);
     }
 
     void end(T bindable);

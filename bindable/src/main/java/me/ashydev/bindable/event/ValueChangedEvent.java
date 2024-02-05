@@ -8,4 +8,12 @@ public class ValueChangedEvent<T> {
         this.old = old;
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return "ValueChangedEvent{" +
+                "old=" + old +
+                ", value=" + value +
+                '}';
+    }
 }

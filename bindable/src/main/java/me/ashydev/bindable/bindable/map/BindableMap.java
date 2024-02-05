@@ -223,7 +223,7 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
 
     @Override
     public void unbindWeak() {
-        for (WeakReference<BindableMap<K, V>> binding : bindings) {
+        for (WeakReference<BindableMap<K, V>> binding : new ArrayList<>(bindings)) {
             final BindableMap<K, V> bindable = binding.get();
 
             if (bindable == null) continue;
@@ -236,7 +236,7 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
 
     @Override
     public void unbindBindings() {
-        for (WeakReference<BindableMap<K, V>> binding : bindings) {
+        for (WeakReference<BindableMap<K, V>> binding : new ArrayList<>(bindings)) {
             final BindableMap<K, V> bindable = binding.get();
 
             if (bindable == null) continue;
