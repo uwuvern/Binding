@@ -60,9 +60,11 @@ public abstract class RangeConstrainedBindable<T extends Number> extends Bindabl
 
     @Override
     public void set(T value) {
-        if (value.equals(this.value)) return;
+        T clamped = clampValue(value);
 
-        super.set(clampValue(value));
+        if (clamped.equals(this.value)) return;
+
+        super.set(clamped);
     }
 
     @Override
@@ -354,10 +356,12 @@ public abstract class RangeConstrainedBindable<T extends Number> extends Bindabl
     }
 
     protected T clampValue(T value) {
-        double min = getMin().doubleValue();
-        double max = getMax().doubleValue();
+        if (min.doubleValue() > value.doubleValue())
+            return min;
+        else if (max.doubleValue() < value.doubleValue())
+            return max;
 
-        return convert(Math.min(Math.max(value.doubleValue(), min), max), type);
+        return value;
     }
 
     protected boolean isValidRange(T min, T max) {
