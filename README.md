@@ -2,7 +2,7 @@
 [![](https://jitpack.io/v/uwuvern/binding.svg)](https://jitpack.io/#uwuvern/binding)
 
 ## Introduction
-Binding is a Java library aimed at adding reactive "Bindable" objects for use in your personal projects, it's a very similar adaption to PPY's osu-framework bindable implementation, but with a lot of tweaks to make it nicer for me, I think it's a useful lib.
+Binding is a Thread Safe Java library aimed at adding reactive "Bindable" objects for use in your personal projects, it's a very similar adaption to PPY's osu-framework bindable implementation, but with a lot of tweaks to make it nicer for me, I think it's a useful lib.
 
 ## Wiki
 Head over to the wiki for more information on how to use bindables [here](https://github.com/uwuvern/binding/wiki)
