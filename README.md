@@ -66,4 +66,4 @@ this is a code adaption in java of ppy's bindable implementation in c#, for the 
 ## Issues
 If you find any issues regarding the library, please open a ticket, and explain in detail your issue, and it will be discussed within the ticket before any action is taken.
 ## Pull Requests
-If you wish to contribute to the library, please fork the project, create a branch to work on, and then once finished create a pull request explaining in detail your changes, why you wan't them changed, what is the purpose, and how it will affect the library, and it will be discussed within the pull request before any action is taken.
+If you wish to contribute to the library, please fork the project, create a branch to work on, and then once finished create a pull request explaining in detail your changes, why you want them changed, what is the purpose, and how it will affect the library, and it will be discussed within the pull request before any action is taken.
