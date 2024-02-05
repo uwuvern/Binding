@@ -10,7 +10,6 @@ plugins {
 }
 
 group = "me.ashydev.bindable"
-version = "1.0"
 
 repositories {
     mavenCentral()
