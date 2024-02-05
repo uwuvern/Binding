@@ -287,6 +287,8 @@ public class Bindable<T> implements IBindable<T> {
     public IBindable<T> weakBind(IBindable<T> other) {
         if (!(other instanceof Bindable<T> bindable)) return null;
 
+        bindable.copyTo(this);
+
         bindable.refer(this);
 
         return this;
