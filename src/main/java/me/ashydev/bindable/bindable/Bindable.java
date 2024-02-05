@@ -28,7 +28,7 @@ public class Bindable<T> implements IBindable<T> {
     protected transient final ActionQueue<ValueChangedEvent<LeaseState>> leaseChanged = new ActionQueue<>();
     protected transient final ActionQueue<ValueChangedEvent<Boolean>> disabledChanged = new ActionQueue<>();
 
-    public transient final LockedWeakList<Bindable<T>> bindings = new LockedWeakList<>();
+    protected transient final LockedWeakList<Bindable<T>> bindings = new LockedWeakList<>();
 
     protected transient Class<T> type;
 
