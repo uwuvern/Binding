@@ -10,12 +10,20 @@ plugins {
     `maven-publish`
 }
 
-group = "me.ashydev.bindable"
+group = "me.ashydev"
 version = "1.0.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
+    }
 }
 
 repositories {
