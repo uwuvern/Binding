@@ -7,13 +7,13 @@
 
 plugins {
     id("java")
-    id("maven")
 }
 
 group = "com.github.uwuvern"
 
 repositories {
     mavenCentral()
+    maven ("https://jitpack.io")
 }
 
 dependencies {
