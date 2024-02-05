@@ -6,4 +6,3 @@
  */
 
 rootProject.name = "binding"
-include("bindable")
