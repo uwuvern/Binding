@@ -5,5 +5,5 @@
  * more information.
  */
 
-rootProject.name = "Binding"
+rootProject.name = "binding"
 include("bindable")
