@@ -10,6 +10,7 @@ package me.ashydev.bindable.bindable.precision;
 import me.ashydev.bindable.action.ValuedAction;
 import me.ashydev.bindable.action.queue.ActionQueue;
 import me.ashydev.bindable.bindable.Bindable;
+import me.ashydev.bindable.bindable.StrongBindable;
 import me.ashydev.bindable.event.ValueChangedEvent;
 
 import java.lang.ref.WeakReference;
@@ -17,7 +18,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 
-public abstract class PrecisionConstrainedBindable<V extends Number, T extends Number> extends Bindable<V> implements IPrecision<T> {
+public abstract class PrecisionConstrainedBindable<V extends Number, T extends Number> extends StrongBindable<V> implements IPrecision<T> {
     private static final List<Class<?>> VALID_PRECISION_TYPES = List.of(Float.class, Double.class);
 
     private static <T extends Number> boolean isValidForPrecision(T precision) {

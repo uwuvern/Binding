@@ -11,11 +11,12 @@ import me.ashydev.bindable.IBindable;
 import me.ashydev.bindable.action.ValuedAction;
 import me.ashydev.bindable.action.queue.ActionQueue;
 import me.ashydev.bindable.bindable.Bindable;
+import me.ashydev.bindable.bindable.StrongBindable;
 import me.ashydev.bindable.event.ValueChangedEvent;
 
 import java.lang.ref.WeakReference;
 
-public abstract class RangeConstrainedBindable<T extends Number> extends Bindable<T> implements IMinMax<T> {
+public abstract class RangeConstrainedBindable<T extends Number> extends StrongBindable<T> implements IMinMax<T> {
     @SuppressWarnings("unchecked")
     public static <T extends Number> T convert(double input, Class<? extends T> type) {
         if (type == Integer.class) {

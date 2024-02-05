@@ -35,8 +35,8 @@ public class LeasedBindable<T> extends Bindable<T> implements ILeasedBindable<T>
         disabled = true;
     }
 
-    private LeasedBindable(T defaultValue) {
-        super(defaultValue);
+    private LeasedBindable(T value) {
+        super(value);
 
         source = null;
         valueBeforeLease = null;
@@ -82,7 +82,7 @@ public class LeasedBindable<T> extends Bindable<T> implements ILeasedBindable<T>
 
         if (this.value != null && this.value.equals(value)) return;
 
-        updateDefaultValue(value, true, null);
+        updateValue(value, true, null);
     }
 
     @Override

@@ -23,7 +23,6 @@ public class Bindable<T> implements IBindable<T> {
     protected final WeakReference<Bindable<T>> weakReference = new WeakReference<>(this);
 
     protected final ActionQueue<ValueChangedEvent<T>> valueChanged = new ActionQueue<>();
-    protected final ActionQueue<ValueChangedEvent<T>> defaultChanged = new ActionQueue<>();
     protected final ActionQueue<ValueChangedEvent<LeaseState>> leaseChanged = new ActionQueue<>();
     protected final ActionQueue<ValueChangedEvent<Boolean>> disabledChanged = new ActionQueue<>();
 
@@ -31,26 +30,20 @@ public class Bindable<T> implements IBindable<T> {
 
     protected Class<T> type;
 
-    protected T value, defaultValue;
+    protected T value;
     protected boolean disabled;
 
     public Bindable() {
         this(null);
     }
 
-    public Bindable(T defaultValue) {
-        if (defaultValue != null) this.type = (Class<T>) defaultValue.getClass();
+    @SuppressWarnings("unchecked")
+    public Bindable(T value) {
+        if (value != null) {
+            this.type = (Class<T>) value.getClass();
+        }
 
-        this.value = defaultValue;
-        this.defaultValue = defaultValue;
-
-        this.disabled = false;
-    }
-
-    public Bindable(T value, T defaultValue) {
-        this(defaultValue);
         this.value = value;
-
         this.disabled = false;
     }
 
@@ -166,68 +159,6 @@ public class Bindable<T> implements IBindable<T> {
     }
 
     @Override
-    public boolean isDefault() {
-        return get().equals(getDefaultValue());
-    }
-
-    @Override
-    public void setDefault() {
-        set(defaultValue);
-    }
-
-    @Override
-    public ActionQueue<ValueChangedEvent<T>> getDefaultChanged() {
-        return defaultChanged;
-    }
-
-    @Override
-    public T getDefaultValue() {
-        return defaultValue;
-    }
-
-    @Override
-    public void setDefaultValue(T defaultValue) {
-        if (defaultValue == this.defaultValue) return;
-
-        updateDefaultValue(defaultValue, false, null);
-    }
-
-    protected void updateDefaultValue(T value, boolean bypassChecks, Bindable<T> source) {
-        T oldValue = this.defaultValue;
-        this.defaultValue = value;
-
-        triggerDefaultChanged(oldValue, source != null ? source : this, value, true, bypassChecks);
-    }
-
-    protected void triggerDefaultChanged(T beforePropagation, Bindable<T> source, T value, boolean propagate, boolean bypassChecks) {
-        if (propagate)
-            propagateDefaultChanged(source, value);
-
-        if (beforePropagation != value)
-            defaultChanged.execute(new ValueChangedEvent<>(beforePropagation, value));
-    }
-
-    private void propagateDefaultChanged(Bindable<T> source, T value) {
-        for (WeakReference<Bindable<T>> binding : bindings) {
-            if (binding.refersTo(source)) continue;
-
-            Bindable<T> bindable = binding.get();
-
-            if (bindable == null) continue;
-
-            bindable.setDefaultValue(value);
-        }
-    }
-
-    @Override
-    public void onDefaultChanged(ValuedAction<T> action, boolean runOnceImmediately) {
-        defaultChanged.add(action);
-
-        if (runOnceImmediately)
-            action.invoke(new ValueChangedEvent<>(defaultValue, defaultValue));
-    }
-
-    @Override
     public Bindable<T> createInstance() {
         return new Bindable<>();
     }
@@ -246,7 +177,6 @@ public class Bindable<T> implements IBindable<T> {
         if (!(other instanceof Bindable)) return null;
 
         other.set(get());
-        other.setDefaultValue(getDefaultValue());
         other.setDisabled(isDisabled());
 
         return (Bindable<T>) other;
@@ -315,7 +245,6 @@ public class Bindable<T> implements IBindable<T> {
     @Override
     public void unbindEvents() {
         valueChanged.clear();
-        defaultChanged.clear();
         disabledChanged.clear();
     }
 

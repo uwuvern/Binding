@@ -28,12 +28,8 @@ public class BindableBool extends Bindable<Boolean> implements IToggleable {
         set(value);
     }
 
-    public BindableBool(boolean defaultValue) {
-        super(defaultValue);
-    }
-
-    public BindableBool(boolean value, boolean defaultValue) {
-        super(value, defaultValue);
+    public BindableBool(boolean value) {
+        super(value);
     }
 
     @Override

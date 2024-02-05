@@ -14,7 +14,7 @@ import java.io.Serializable;
 public interface IBindable<T>
         extends IUnbindable, IContainer<T>, IDisableable,
         ICopyable<IBindable<T>>, InstanceContainer<IBindable<T>>,
-        IHasDefault<T>, IBindingContainer<IBindable<T>>, ILeaser<ILeasedBindable<T>>,
+        IBindingContainer<IBindable<T>>, ILeaser<ILeasedBindable<T>>,
         Serializable {
 
     static <T, V extends IBindable<T>> IBindable<T> create(V source) {
