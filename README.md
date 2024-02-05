@@ -4,13 +4,15 @@
 ## Introduction
 Binding is a Java library aimed at adding reactive "Bindable" objects for use in your personal projects, it's a very similar adaption to PPY's osu-framework bindable implementation, but with a lot of tweaks to make it nicer for me, I think it's a useful lib.
 
+## Head over to the wiki for more information on how to use bindables [here](https://github.com/ThatOneDevil/binding/wiki/Introduction)
+
 ## Usage
 You can get the latest version in the releases page, or you can use jitpack to get the latest version, the latest version is [![](https://jitpack.io/v/uwuvern/binding.svg)](https://jitpack.io/#uwuvern/binding)
 
 If needed here's a reference to the release page [here](https://github.com/uwuvern/binding/releases)
 ### Gradle
 
-#### Groovy
+### Groovy
 First add the repository
 ```groovy
 repositories {
@@ -25,7 +27,7 @@ dependencies {
 }
 ```
 
-#### Kotlin
+### Kotlin
 First add the repository
 ```kotlin
 repositories {
@@ -59,7 +61,7 @@ Then add the dependency
 ```
 
 # Quick Notice
-## Adapation
+## Adaptation
 this is a code adaption in java of ppy's bindable implementation in c#, for the source of the original code please visit [here](https://github.com/ppy/osu-framework/blob/master/osu.Framework/Bindables/Bindable.cs), this version is aimed at rewriting it to have more features, and to work with java, another commonly used language similar to c#, all credit of the original implementation goes to ppy, and the osu-framework contributors.
 
 # Contributing
