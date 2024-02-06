@@ -11,6 +11,15 @@ Head over to the wiki for more information on how to use bindables [here](https:
 You can get the latest version in the releases page, or you can use jitpack to get the latest version, the latest version is [![](https://jitpack.io/v/uwuvern/binding.svg)](https://jitpack.io/#uwuvern/binding)
 
 If needed here's a reference to the release page [here](https://github.com/uwuvern/binding/releases)
+
+This project is multi modular, so using it requires having the modules as dependencies, the current modules are
+
+- core      | the base implementation of the bindables
+- bindables | extra bindable types
+- kotlin    | The kotlin extensions for bindables
+
+please replace the {module} field with your desired module & the {version} field with your desired version
+
 ### Gradle
 
 ### Groovy
@@ -21,10 +30,10 @@ repositories {
 }
 ```
 
-Then add the dependency
+Then add the dependenc(y/ies)
 ```groovy
 dependencies {
-    implementation 'com.github.uwuvern:binding:{version}'
+    implementation 'com.github.uwuvern.binding:{module}:{version}'
 }
 ```
 
@@ -38,7 +47,7 @@ repositories {
 Then add the dependency
 ```kotlin
 dependencies {
-    implementation("com.github.uwuvern:binding:{version}")
+    implementation("com.github.uwuvern.binding:{module}:{version}")
 }
 ```
 
@@ -55,8 +64,8 @@ First add the repository
 Then add the dependency
 ```xml
 <dependency>
-    <groupId>com.github.uwuvern</groupId>
-    <artifactId>binding</artifactId>
+    <groupId>com.github.uwuvern.binding</groupId>
+    <artifactId>{module}</artifactId>
     <version>{version}</version>
 </dependency>
 ```
