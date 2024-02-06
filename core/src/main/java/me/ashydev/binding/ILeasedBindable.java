@@ -5,8 +5,8 @@
  * more information.
  */
 
-rootProject.name = "binding"
-include("common")
-include("action")
-include("core")
-include("bindables")
+package me.ashydev.binding;
+
+import me.ashydev.binding.types.ILeased;
+
+public interface ILeasedBindable<T> extends ILeased, IBindable<T> { }

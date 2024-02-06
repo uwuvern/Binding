@@ -5,8 +5,9 @@
  * more information.
  */
 
-rootProject.name = "binding"
-include("common")
-include("action")
-include("core")
-include("bindables")
+package me.ashydev.binding.action;
+
+@FunctionalInterface
+public interface Action<T> {
+    void invoke(T event);
+}

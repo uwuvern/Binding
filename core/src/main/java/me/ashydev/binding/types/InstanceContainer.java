@@ -5,8 +5,8 @@
  * more information.
  */
 
-rootProject.name = "binding"
-include("common")
-include("action")
-include("core")
-include("bindables")
+package me.ashydev.binding.types;
+
+public interface InstanceContainer<T> {
+    T createInstance();
+}

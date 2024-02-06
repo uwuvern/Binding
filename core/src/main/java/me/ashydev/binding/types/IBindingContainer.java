@@ -5,8 +5,10 @@
  * more information.
  */
 
-rootProject.name = "binding"
-include("common")
-include("action")
-include("core")
-include("bindables")
+package me.ashydev.binding.types;
+
+public interface IBindingContainer<T> {
+    T bindTo(T other);
+
+    T weakBind(T other);
+}

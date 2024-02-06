@@ -5,8 +5,8 @@
  * more information.
  */
 
-rootProject.name = "binding"
-include("common")
-include("action")
-include("core")
-include("bindables")
+package me.ashydev.binding.action.execution;
+
+public interface IExecutable<T> {
+    boolean execute(T event);
+}

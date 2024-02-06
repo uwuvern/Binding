@@ -5,8 +5,16 @@
  * more information.
  */
 
-rootProject.name = "binding"
-include("common")
-include("action")
-include("core")
-include("bindables")
+package me.ashydev.binding.types;
+
+public interface ICopyable<T> {
+    T copy();
+
+    T copyTo(T other);
+
+    T getBoundCopy();
+
+    T getUnboundCopy();
+
+    T getWeakCopy();
+}

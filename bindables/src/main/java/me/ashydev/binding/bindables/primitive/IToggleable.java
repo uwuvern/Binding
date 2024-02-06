@@ -5,8 +5,11 @@
  * more information.
  */
 
-rootProject.name = "binding"
-include("common")
-include("action")
-include("core")
-include("bindables")
+package me.ashydev.binding.bindables.primitive;
+
+public interface IToggleable {
+    void toggle();
+
+    void on();
+    void off();
+}

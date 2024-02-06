@@ -5,8 +5,9 @@
  * more information.
  */
 
-rootProject.name = "binding"
-include("common")
-include("action")
-include("core")
-include("bindables")
+package me.ashydev.binding.types;
+
+public interface ILeased {
+    boolean lease();
+    void end();
+}

@@ -5,8 +5,10 @@
  * more information.
  */
 
-rootProject.name = "binding"
-include("common")
-include("action")
-include("core")
-include("bindables")
+package me.ashydev.binding.common.lang.types;
+
+public final class Void {
+    public static final Void INSTANCE = new Void();
+
+    private Void() { }
+}
