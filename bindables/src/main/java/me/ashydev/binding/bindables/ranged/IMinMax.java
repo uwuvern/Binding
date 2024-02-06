@@ -12,22 +12,28 @@ import me.ashydev.binding.action.queue.ValuedActionQueue;
 
 public interface IMinMax<T extends Number> {
     ValuedActionQueue<T> getOnMinChanged();
+
     ValuedActionQueue<T> getOnMaxChanged();
 
     ValuedActionQueue<T> getOnDefaultMinChanged();
+
     ValuedActionQueue<T> getOnDefaultMaxChanged();
 
 
     T getMin();
-    T getMax();
 
     void setMin(T min);
+
+    T getMax();
+
     void setMax(T max);
 
     T getDefaultMin();
-    T getDefaultMax();
 
     void setDefaultMin(T min);
+
+    T getDefaultMax();
+
     void setDefaultMax(T max);
 
     float normalized();
@@ -35,21 +41,25 @@ public interface IMinMax<T extends Number> {
     boolean hasDefinedRange();
 
     void onMinChanged(ValuedAction<T> action, boolean runOnceImmediately);
+
     default void onMinChanged(ValuedAction<T> action) {
         onMinChanged(action, false);
     }
 
     void onMaxChanged(ValuedAction<T> action, boolean runOnceImmediately);
+
     default void onMaxChanged(ValuedAction<T> action) {
         onMaxChanged(action, false);
     }
 
     void onDefaultMinChanged(ValuedAction<T> action, boolean runOnceImmediately);
+
     default void onDefaultMinChanged(ValuedAction<T> action) {
         onDefaultMinChanged(action, false);
     }
 
     void onDefaultMaxChanged(ValuedAction<T> action, boolean runOnceImmediately);
+
     default void onDefaultMaxChanged(ValuedAction<T> action) {
         onDefaultMaxChanged(action, false);
     }

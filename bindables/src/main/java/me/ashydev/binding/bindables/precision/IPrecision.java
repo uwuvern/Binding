@@ -8,26 +8,29 @@
 package me.ashydev.binding.bindables.precision;
 
 import me.ashydev.binding.action.ValuedAction;
-import me.ashydev.binding.action.event.ValueChangedEvent;
-import me.ashydev.binding.action.queue.ActionQueue;
 import me.ashydev.binding.action.queue.ValuedActionQueue;
 
 public interface IPrecision<T extends Number> {
     ValuedActionQueue<T> getPrecisionChanged();
+
     ValuedActionQueue<T> getDefaultPrecisionChanged();
 
     T getPrecision();
+
     void setPrecision(T precision);
 
     T getDefaultPrecision();
+
     void setDefaultPrecision(T precision);
 
     void onPrecisionChanged(ValuedAction<T> action, boolean runOnceImmediately);
+
     default void onPrecisionChanged(ValuedAction<T> action) {
         onPrecisionChanged(action, false);
     }
 
     void onDefaultPrecisionChanged(ValuedAction<T> action, boolean runOnceImmediately);
+
     default void onDefaultPrecisionChanged(ValuedAction<T> action) {
         onDefaultPrecisionChanged(action, false);
     }

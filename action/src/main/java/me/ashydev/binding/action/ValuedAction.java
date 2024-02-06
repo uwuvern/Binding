@@ -13,7 +13,8 @@ import me.ashydev.binding.action.event.ValueChangedEvent;
 public interface ValuedAction<T> extends Action<ValueChangedEvent<T>> {
 
     static <T> ValuedAction<T> empty() {
-        return event -> { };
+        return event -> {
+        };
     }
 
     static <T> ValueChangedEvent<T> event(T old, T next) {

@@ -10,7 +10,6 @@ package me.ashydev.binding.bindable;
 import me.ashydev.binding.IBindable;
 import me.ashydev.binding.action.ValuedAction;
 import me.ashydev.binding.action.event.ValueChangedEvent;
-import me.ashydev.binding.action.queue.ActionQueue;
 import me.ashydev.binding.action.queue.ValuedActionQueue;
 import me.ashydev.binding.types.IHasDefault;
 

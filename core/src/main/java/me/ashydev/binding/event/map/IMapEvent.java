@@ -11,6 +11,7 @@ import java.util.Collection;
 
 public interface IMapEvent<K, E> {
     Collection<Element<K, E>> getNew();
+
     Collection<Element<K, E>> getOld();
 
     Type getType();
@@ -22,11 +23,11 @@ public interface IMapEvent<K, E> {
     record Element<K, E>(K key, E element) {
 
         @Override
-            public String toString() {
-                return "Element{" +
-                        "key=" + key +
-                        ", element=" + element +
-                        '}';
-            }
+        public String toString() {
+            return "Element{" +
+                    "key=" + key +
+                    ", element=" + element +
+                    '}';
         }
+    }
 }

@@ -8,8 +8,6 @@
 package me.ashydev.binding.types;
 
 import me.ashydev.binding.action.ValuedAction;
-import me.ashydev.binding.action.event.ValueChangedEvent;
-import me.ashydev.binding.action.queue.ActionQueue;
 import me.ashydev.binding.action.queue.ValuedActionQueue;
 
 public interface IContainer<T> {

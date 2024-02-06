@@ -14,6 +14,7 @@ public interface ILeaser<T> {
     ValuedActionQueue<LeaseState> getLeaseChanged();
 
     T begin(boolean revertValueOnReturn);
+
     default T begin() {
         return begin(true);
     }
@@ -21,6 +22,7 @@ public interface ILeaser<T> {
     void end(T bindable);
 
     void onLeaseChanged(ValuedAction<LeaseState> action, boolean runOnceImmediately);
+
     default void onLeaseChanged(ValuedAction<LeaseState> action) {
         onLeaseChanged(action, false);
     }

@@ -28,9 +28,8 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
     private transient final ValuedActionQueue<Boolean> disabledChanged = new ValuedActionQueue<>();
 
     private transient final LockedWeakList<BindableMap<K, V>> bindings = new LockedWeakList<>();
-    private transient boolean disabled;
-
     private final Map<K, V> map;
+    private transient boolean disabled;
 
 
     public BindableMap(MapType type, Map<K, V> items) {
@@ -365,7 +364,6 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
     }
 
 
-
     @Override
     public V remove(Object key) {
         return remove(key, new HashSet<>());
@@ -403,7 +401,7 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
     }
 
     @Override
-    public void putAll( Map<? extends K, ? extends V> m) {
+    public void putAll(Map<? extends K, ? extends V> m) {
         putAll(m, new HashSet<>());
     }
 
@@ -469,19 +467,19 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
         );
     }
 
-    
+
     @Override
     public Set<K> keySet() {
         return map.keySet();
     }
 
-    
+
     @Override
     public Collection<V> values() {
         return map.values();
     }
 
-    
+
     @Override
     public Set<Entry<K, V>> entrySet() {
         return map.entrySet();
@@ -496,6 +494,7 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
 
         return collection;
     }
+
     private Collection<IMapEvent.Element<K, V>> getElements(K key, V value) {
         Collection<IMapEvent.Element<K, V>> collection = new ArrayList<>();
 
@@ -503,6 +502,7 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
 
         return collection;
     }
+
     public enum MapType {
         HASH, LINKED, IDENTITY, WEAK
     }

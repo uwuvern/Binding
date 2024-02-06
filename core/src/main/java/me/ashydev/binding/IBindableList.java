@@ -49,6 +49,7 @@ public interface IBindableList<T>
     }
 
     void onCollectionChanged(Action<CollectionEvent<T>> action, boolean runOnceImmediately);
+
     default void onCollectionChanged(Action<CollectionEvent<T>> action) {
         onCollectionChanged(action, false);
     }

@@ -7,15 +7,13 @@
 
 package me.ashydev.binding.bindable;
 
-import me.ashydev.binding.action.queue.ValuedActionQueue;
-import me.ashydev.binding.common.reference.LockedWeakList;
 import me.ashydev.binding.IBindable;
 import me.ashydev.binding.ILeasedBindable;
 import me.ashydev.binding.IUnbindable;
-import me.ashydev.binding.action.Action;
 import me.ashydev.binding.action.ValuedAction;
 import me.ashydev.binding.action.event.ValueChangedEvent;
-import me.ashydev.binding.action.queue.ActionQueue;
+import me.ashydev.binding.action.queue.ValuedActionQueue;
+import me.ashydev.binding.common.reference.LockedWeakList;
 import me.ashydev.binding.types.ILeaser;
 
 import java.lang.ref.WeakReference;
@@ -35,10 +33,12 @@ public class Bindable<T> implements IBindable<T> {
     protected transient boolean disabled;
 
     protected T value;
+    private LeasedBindable<T> leasedBindable;
 
     public Bindable() {
         this(null);
     }
+
 
     @SuppressWarnings("unchecked")
     public Bindable(T value) {
@@ -49,7 +49,6 @@ public class Bindable<T> implements IBindable<T> {
         this.value = value;
         this.disabled = false;
     }
-
 
     @Override
     public T get() {
@@ -315,7 +314,6 @@ public class Bindable<T> implements IBindable<T> {
         bindable.unrefer(this);
     }
 
-    private LeasedBindable<T> leasedBindable;
     private LeaseState getLeaseState() {
         return leasedBindable != null ? LeaseState.LEASED : LeaseState.NONE;
     }
@@ -343,6 +341,8 @@ public class Bindable<T> implements IBindable<T> {
 
         leasedBindable = new LeasedBindable<>(this, revertValueOnReturn);
 
+        updateLeaseState(LeaseState.LEASED);
+
         return leasedBindable;
     }
 
@@ -360,6 +360,7 @@ public class Bindable<T> implements IBindable<T> {
             throw new IllegalArgumentException(String.format("Attempted to end a lease on %s, but it was not the current lease.", this.getClass().getSimpleName()));
 
         leasedBindable = null;
+        updateLeaseState(LeaseState.RETURNED);
     }
 
     @Override

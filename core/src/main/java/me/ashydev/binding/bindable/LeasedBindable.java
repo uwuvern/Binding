@@ -15,7 +15,7 @@ public class LeasedBindable<T> extends Bindable<T> implements ILeasedBindable<T>
     private final T valueBeforeLease;
     private final boolean disabledBeforeLease;
     private final boolean revertValueOnReturn;
-
+    private boolean hasBeenReturned = false;
 
     public LeasedBindable(Bindable<T> source, boolean revertValueOnReturn) {
         bindTo(source);
@@ -51,8 +51,6 @@ public class LeasedBindable<T> extends Bindable<T> implements ILeasedBindable<T>
         disabledBeforeLease = false;
         revertValueOnReturn = false;
     }
-
-    private boolean hasBeenReturned = false;
 
     @Override
     public boolean lease() {

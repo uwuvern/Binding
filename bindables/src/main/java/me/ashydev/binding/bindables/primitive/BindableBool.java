@@ -13,6 +13,7 @@ public class BindableBool extends Bindable<Boolean> implements IToggleable {
     public BindableBool() {
         super();
     }
+
     public BindableBool(Object input) {
         super();
         boolean value;

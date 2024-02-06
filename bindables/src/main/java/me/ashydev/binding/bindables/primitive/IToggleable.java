@@ -11,5 +11,6 @@ public interface IToggleable {
     void toggle();
 
     void on();
+
     void off();
 }

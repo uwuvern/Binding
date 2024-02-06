@@ -27,7 +27,9 @@ public class CrossThreadBindingTest {
         });
 
         thread2 = new Thread(() -> {
-            bindable.onValueChanged((event) -> { assert other.get() == 400; });
+            bindable.onValueChanged((event) -> {
+                assert other.get() == 400;
+            });
         });
 
         thread1.start();
@@ -44,7 +46,9 @@ public class CrossThreadBindingTest {
         });
 
         thread2 = new Thread(() -> {
-            bindable.onValueChanged((event) -> { assert other.get() == 400; });
+            bindable.onValueChanged((event) -> {
+                assert other.get() == 400;
+            });
         });
 
         thread1.start();
@@ -63,8 +67,12 @@ public class CrossThreadBindingTest {
         });
 
         thread2 = new Thread(() -> {
-            bindable.onValueChanged((event) -> { assert other.get() == 400; });
-            other.onValueChanged((event) -> { assert other.get() == 400 || other.get() == 200; });
+            bindable.onValueChanged((event) -> {
+                assert other.get() == 400;
+            });
+            other.onValueChanged((event) -> {
+                assert other.get() == 400 || other.get() == 200;
+            });
         });
 
         thread1.start();

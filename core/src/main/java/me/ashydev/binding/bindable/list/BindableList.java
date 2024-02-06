@@ -28,9 +28,8 @@ public class BindableList<T> implements IBindableList<T> {
     private transient final ValuedActionQueue<Boolean> disabledChanged = new ValuedActionQueue<>();
 
     private transient final LockedWeakList<BindableList<T>> bindings = new LockedWeakList<>();
-    private transient boolean disabled;
-
     private final List<T> collection = new ArrayList<>();
+    private transient boolean disabled;
 
     public BindableList(Collection<T> items) {
         if (items != null)
@@ -50,10 +49,10 @@ public class BindableList<T> implements IBindableList<T> {
         if (runOnceImmediately)
             action.invoke(
                     new CollectionEvent<>(CollectionEvent.Type.ADD,
-                        collection.stream()
-                                .map(e -> new CollectionEvent.Element<>(e, collection.indexOf(e)))
-                                .toList(),
-                        Collections.emptyList()
+                            collection.stream()
+                                    .map(e -> new CollectionEvent.Element<>(e, collection.indexOf(e)))
+                                    .toList(),
+                            Collections.emptyList()
                     )
             );
     }
@@ -222,12 +221,12 @@ public class BindableList<T> implements IBindableList<T> {
     }
 
     @Override
-    public Object [] toArray() {
+    public Object[] toArray() {
         return collection.toArray();
     }
 
     @Override
-    public <T1> T1 [] toArray(T1 [] a) {
+    public <T1> T1[] toArray(T1[] a) {
         return collection.toArray(a);
     }
 
@@ -311,7 +310,7 @@ public class BindableList<T> implements IBindableList<T> {
         return removeAll(c, new HashSet<>());
     }
 
-    @SuppressWarnings({ "SuspiciousMethodCalls", "unchecked" })
+    @SuppressWarnings({"SuspiciousMethodCalls", "unchecked"})
     protected boolean removeAll(Collection<?> c, Set<BindableList<T>> appliedInstances) {
         if (checkAlreadyApplied(appliedInstances)) return false;
 

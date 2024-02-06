@@ -10,7 +10,6 @@ package me.ashydev.binding.bindables.ranged;
 import me.ashydev.binding.IBindable;
 import me.ashydev.binding.action.ValuedAction;
 import me.ashydev.binding.action.event.ValueChangedEvent;
-import me.ashydev.binding.action.queue.ActionQueue;
 import me.ashydev.binding.action.queue.ValuedActionQueue;
 import me.ashydev.binding.bindable.Bindable;
 import me.ashydev.binding.bindable.StrongBindable;
@@ -20,6 +19,26 @@ import java.util.ArrayList;
 
 
 public abstract class RangeConstrainedBindable<T extends Number> extends StrongBindable<T> implements IMinMax<T> {
+    private transient final ValuedActionQueue<T> minValueChanged = new ValuedActionQueue<>();
+    private transient final ValuedActionQueue<T> maxValueChanged = new ValuedActionQueue<>();
+    private transient final ValuedActionQueue<T> defaultMinValueChanged = new ValuedActionQueue<>();
+    private transient final ValuedActionQueue<T> defaultMaxValueChanged = new ValuedActionQueue<>();
+    private T min, max;
+    private T defaultMin, defaultMax;
+    public RangeConstrainedBindable(T value, T min, T max) {
+        super(value);
+
+        this.min = min;
+        this.max = max;
+
+        this.defaultMin = min;
+        this.defaultMax = max;
+    }
+
+    public RangeConstrainedBindable(T min, T max) {
+        this(min, min, max);
+    }
+
     @SuppressWarnings("unchecked")
     public static <T extends Number> T convert(double input, Class<? extends T> type) {
         if (type == Integer.class) {
@@ -37,30 +56,6 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
         } else {
             throw new IllegalArgumentException("Unsupported number type: " + type);
         }
-    }
-    
-    
-    private transient final ValuedActionQueue<T> minValueChanged = new ValuedActionQueue<>();
-    private transient final ValuedActionQueue<T> maxValueChanged = new ValuedActionQueue<>();
-
-    private transient final ValuedActionQueue<T> defaultMinValueChanged = new ValuedActionQueue<>();
-    private transient final ValuedActionQueue<T> defaultMaxValueChanged = new ValuedActionQueue<>();
-
-    private T min, max;
-    private T defaultMin, defaultMax;
-
-    public RangeConstrainedBindable(T value, T min, T max) {
-        super(value);
-
-        this.min = min;
-        this.max = max;
-
-        this.defaultMin = min;
-        this.defaultMax = max;
-    }
-
-    public RangeConstrainedBindable(T min, T max) {
-        this(min, min, max);
     }
 
     @Override
@@ -212,15 +207,22 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
     }
 
     @Override
+    public void setDefaultMin(T min) {
+        if (min.equals(this.min)) return;
+
+        triggerDefaultMinValueChange(this, true, min);
+    }
+
+    @Override
     public T getDefaultMax() {
         return defaultMax;
     }
 
     @Override
-    public void setDefaultMin(T min) {
-        if (min.equals(this.min)) return;
+    public void setDefaultMax(T max) {
+        if (max.equals(this.max)) return;
 
-        triggerDefaultMinValueChange(this, true, min);
+        triggerDefaultMaxValueChange(this, true, max);
     }
 
     protected void triggerDefaultMinValueChange(RangeConstrainedBindable<T> source, boolean propagateToBindings, T min) {
@@ -248,13 +250,6 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
                 rangeConstrainedBindable.setDefaultMin(defaultMin);
             }
         }
-    }
-
-    @Override
-    public void setDefaultMax(T max) {
-        if (max.equals(this.max)) return;
-
-        triggerDefaultMaxValueChange(this, true, max);
     }
 
     protected void triggerDefaultMaxValueChange(RangeConstrainedBindable<T> source, boolean propagateToBindings, T max) {

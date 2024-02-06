@@ -9,5 +9,6 @@ package me.ashydev.binding.types;
 
 public interface ILeased {
     boolean lease();
+
     void end();
 }

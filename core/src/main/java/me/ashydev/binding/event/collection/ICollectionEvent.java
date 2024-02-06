@@ -25,11 +25,11 @@ public interface ICollectionEvent<E> {
     record Element<E>(E value, int index) {
 
         @Override
-            public String toString() {
-                return "Element{" +
-                        "value=" + value +
-                        ", index=" + index +
-                        '}';
-            }
+        public String toString() {
+            return "Element{" +
+                    "value=" + value +
+                    ", index=" + index +
+                    '}';
         }
+    }
 }

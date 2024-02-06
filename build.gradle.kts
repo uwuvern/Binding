@@ -53,7 +53,7 @@ subprojects {
     }
 
     tasks {
-        named ("build") {
+        named("build") {
             dependsOn("shadowJar")
         }
     }

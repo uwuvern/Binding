@@ -9,4 +9,5 @@ package me.ashydev.binding;
 
 import me.ashydev.binding.types.ILeased;
 
-public interface ILeasedBindable<T> extends ILeased, IBindable<T> { }
+public interface ILeasedBindable<T> extends ILeased, IBindable<T> {
+}

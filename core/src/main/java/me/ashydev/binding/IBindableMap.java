@@ -49,6 +49,7 @@ public interface IBindableMap<K, V>
     }
 
     void onCollectionChanged(Action<MapEvent<K, V>> action, boolean runOnceImmediately);
+
     default void onCollectionChanged(Action<MapEvent<K, V>> action) {
         onCollectionChanged(action, false);
     }
