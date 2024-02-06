@@ -7,6 +7,8 @@
 
 plugins {
     id("java")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+
     `maven-publish`
 }
 
@@ -18,6 +20,7 @@ allprojects {
 subprojects {
     apply {
         plugin("java")
+        plugin("com.github.johnrengelman.shadow")
         plugin("maven-publish")
     }
 
@@ -48,8 +51,6 @@ subprojects {
             attributes["Implementation-Version"] = project.version
         }
     }
-
-
 
     publishing {
         publications {
