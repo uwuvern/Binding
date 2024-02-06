@@ -2,7 +2,7 @@
 [![](https://jitpack.io/v/uwuvern/binding.svg)](https://jitpack.io/#uwuvern/binding)
 
 ## Introduction
-Binding is a Thread Safe Java library aimed at adding reactive "Bindable" objects for use in your personal projects, it's a very similar adaption to PPY's osu-framework bindable implementation, but with a lot of tweaks to make it nicer for me, I think it's a useful lib.
+Binding is a Thread Safe Java library aimed at adding reactive "Bindable" objects for use in your personal projects, it's a very similar adaption to PPY's osu-framework bindable implementation, but with a lot of tweaks to hopefully make this useful for java projects, and before you ask, no these are not AtomicReferences, if you are going to complain to me about saying its the same thing, no it isnt, this is not the place to complain, I don't want to hear about that, these work very differently, please read the docs, and actually learn java before complaining to me about that.
 
 ## Wiki
 Head over to the wiki for more information on how to use bindables [here](https://github.com/uwuvern/binding/wiki)
