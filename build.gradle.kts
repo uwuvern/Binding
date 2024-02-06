@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 /*
  * Copyright (c) 2024 Ashley (uwuvern) <uwuvern@outlook.com>
  *
@@ -38,20 +40,6 @@ subprojects {
         testImplementation("org.junit.jupiter:junit-jupiter-engine")
     }
 
-    tasks.withType<JavaCompile> {
-        sourceCompatibility = properties["java"] as String
-        targetCompatibility = properties["java"] as String
-
-        options.encoding = "UTF-8"
-    }
-
-    tasks.withType<Jar> {
-        manifest {
-            attributes["Implementation-Title"] = project.name
-            attributes["Implementation-Version"] = project.version
-        }
-    }
-
     publishing {
         publications {
             create<MavenPublication>("maven") {
@@ -64,7 +52,47 @@ subprojects {
         }
     }
 
-    tasks.test {
-        useJUnitPlatform()
+    tasks {
+        named ("build") {
+            dependsOn("shadowJar")
+        }
+    }
+
+    tasks {
+        withType<JavaCompile> {
+            sourceCompatibility = project.properties["java"] as String
+            targetCompatibility = project.properties["java"] as String
+
+            options.encoding = "UTF-8"
+        }
+    }
+
+    tasks {
+        named<ShadowJar>("shadowJar") {
+            archiveClassifier.set("")
+            mergeServiceFiles()
+
+            dependsOn(jar)
+        }
+    }
+
+    tasks {
+        named<Jar>("jar") {
+            archiveClassifier.set("original")
+
+            manifest {
+                attributes["Implementation-Title"] = project.name
+                attributes["Implementation-Version"] = project.version
+            }
+
+            from(sourceSets["main"].output)
+        }
+    }
+
+
+    tasks {
+        test {
+            useJUnitPlatform()
+        }
     }
 }
