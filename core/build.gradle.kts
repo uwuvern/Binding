@@ -3,6 +3,9 @@ plugins {
     `maven-publish`
 }
 
+group = properties["group"] as String
+version = properties["version"] as String
+
 repositories {
     mavenCentral()
     maven("https://jitpack.io")
