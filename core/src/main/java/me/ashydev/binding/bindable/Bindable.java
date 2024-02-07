@@ -29,11 +29,11 @@ public class Bindable<T> implements IBindable<T> {
     protected transient final LockedWeakList<Bindable<T>> bindings = new LockedWeakList<>();
 
     protected transient Class<T> type;
-
+    protected transient LeasedBindable<T> leasedBindable;
     protected transient boolean disabled;
 
     protected T value;
-    private LeasedBindable<T> leasedBindable;
+
 
     public Bindable() {
         this(null);

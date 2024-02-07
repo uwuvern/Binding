@@ -46,6 +46,10 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
         this.disabled = false;
     }
 
+    public BindableMap(Map<K, V> items) {
+        this(MapType.HASH, items);
+    }
+
     public BindableMap() {
         this(MapType.HASH, null);
     }
