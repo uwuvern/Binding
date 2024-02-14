@@ -9,5 +9,5 @@ package me.ashydev.binding.action;
 
 @FunctionalInterface
 public interface Action<T> {
-    void invoke(T event);
+    void accept(T event);
 }

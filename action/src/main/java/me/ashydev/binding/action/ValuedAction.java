@@ -21,8 +21,8 @@ public interface ValuedAction<T> extends Action<ValueChangedEvent<T>> {
         return new ValueChangedEvent<>(old, next);
     }
 
-    default void invoke(T old, T next) {
-        invoke(event(old, next));
+    default void accept(T old, T next) {
+        accept(event(old, next));
     }
 }
 

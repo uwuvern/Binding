@@ -13,9 +13,6 @@ import me.ashydev.binding.action.event.ValueChangedEvent;
 import me.ashydev.binding.action.queue.ValuedActionQueue;
 import me.ashydev.binding.types.IHasDefault;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-
 public class StrongBindable<T> extends Bindable<T> implements IHasDefault<T> {
     protected transient final ValuedActionQueue<T> defaultChanged = new ValuedActionQueue<>();
     protected T defaultValue;
@@ -72,36 +69,35 @@ public class StrongBindable<T> extends Bindable<T> implements IHasDefault<T> {
         T oldValue = this.defaultValue;
         this.defaultValue = value;
 
-        triggerDefaultChanged(oldValue, source != null ? source : this, value, true, bypassChecks);
+        triggerDefaultChanged(oldValue, value, bypassChecks, true, source);
     }
 
-    protected void triggerDefaultChanged(T beforePropagation, StrongBindable<T> source, T value, boolean propagate, boolean bypassChecks) {
-        if (propagate)
-            propagateDefaultChanged(source, value);
+    protected void triggerDefaultChanged(
+            T beforePropagation,
+            T value,
+            boolean bypassChecks,
+            boolean propagateToBindings,
+            StrongBindable<T> source
+    ) {
+        if (propagateToBindings || bypassChecks) {
+            propagate(
+                    (binding) -> binding instanceof StrongBindable<T>,
+                    (binding) -> ((StrongBindable<T>) binding).updateDefaultValue(value, bypassChecks, source),
+                    source
+            );
+        }
 
         if (beforePropagation != value)
             defaultChanged.execute(new ValueChangedEvent<>(beforePropagation, value));
-    }
-
-    private void propagateDefaultChanged(StrongBindable<T> source, T value) {
-        for (WeakReference<Bindable<T>> binding : new ArrayList<>(bindings)) {
-            if (binding.refersTo(source)) continue;
-
-            Bindable<T> bindable = binding.get();
-
-            if (bindable == null) continue;
-            if (!(bindable instanceof StrongBindable<T> strongBindable)) continue;
-
-            strongBindable.updateDefaultValue(value, true, source);
-        }
     }
 
     @Override
     public void onDefaultChanged(ValuedAction<T> action, boolean runOnceImmediately) {
         defaultChanged.add(action);
 
-        if (runOnceImmediately)
-            action.invoke(new ValueChangedEvent<>(defaultValue, defaultValue));
+        if (runOnceImmediately) {
+            action.accept(new ValueChangedEvent<>(defaultValue, defaultValue));
+        }
     }
 
     @Override

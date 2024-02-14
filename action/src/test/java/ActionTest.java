@@ -21,7 +21,7 @@ public class ActionTest {
 
         Action<Void> action = event -> invoked.set(true);
 
-        action.invoke(Void.INSTANCE);
+        action.accept(Void.INSTANCE);
 
         assert invoked.get();
     }
@@ -32,7 +32,7 @@ public class ActionTest {
 
         ValuedAction<String> action = event -> invoked.set(event.getNew());
 
-        action.invoke(invoked.get(), "Hello, World!");
+        action.accept(invoked.get(), "Hello, World!");
 
         assert invoked.get().equals("Hello, World!");
     }

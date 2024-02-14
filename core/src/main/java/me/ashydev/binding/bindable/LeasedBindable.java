@@ -79,7 +79,7 @@ public class LeasedBindable<T> extends Bindable<T> implements ILeasedBindable<T>
 
         if (this.value != null && this.value.equals(value)) return;
 
-        updateValue(value, true, null);
+        updateValue(value, null);
     }
 
     @Override

@@ -7,11 +7,14 @@
 
 package me.ashydev.binding.bindables.precision;
 
+import me.ashydev.binding.action.Action;
 import me.ashydev.binding.action.ValuedAction;
 import me.ashydev.binding.action.event.ValueChangedEvent;
 import me.ashydev.binding.action.queue.ValuedActionQueue;
 import me.ashydev.binding.bindable.Bindable;
 import me.ashydev.binding.bindable.StrongBindable;
+import me.ashydev.binding.bindables.ranged.RangeConstrainedBindable;
+import me.ashydev.binding.bindables.ranged.RangedBindable;
 
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
@@ -38,6 +41,14 @@ public abstract class PrecisionConstrainedBindable<V extends Number, T extends N
 
     public PrecisionConstrainedBindable(T precision) {
         this(null, precision);
+    }
+
+    protected void propagatePrecision(Action<PrecisionConstrainedBindable<V, T>> propagation, PrecisionConstrainedBindable<V, T> source) {
+        super.propagate(
+                (binding) -> binding instanceof PrecisionConstrainedBindable<?,?>,
+                (binding) -> propagation.accept((PrecisionConstrainedBindable<V, T>) binding),
+                source
+        );
     }
 
     private static <T extends Number> boolean isValidForPrecision(T precision) {
@@ -106,33 +117,32 @@ public abstract class PrecisionConstrainedBindable<V extends Number, T extends N
         T previous = this.precision;
         this.precision = precision;
 
-        triggerPrecisionChanged(previous, precision, true, source);
+        triggerPrecisionChanged(previous, precision, updateCurrentValue, source);
 
-        if (updateCurrentValue)
+        if (updateCurrentValue) {
             set(value);
+        }
     }
 
-    protected void triggerPrecisionChanged(T previous, T current, boolean propagateToBindings, PrecisionConstrainedBindable<V, T> source) {
-        if (propagateToBindings)
-            propagatePrecisionChanged(previous, current, source);
+    protected void triggerPrecisionChanged(
+            T previous,
+            T current,
+            boolean updateCurrentValue,
+            PrecisionConstrainedBindable<V, T> source
+    ) {
+        triggerPrecisionChanged(previous, current, false, updateCurrentValue, true, source);
     }
 
-    protected void propagatePrecisionChanged(T previous, T current, PrecisionConstrainedBindable<V, T> source) {
-        for (WeakReference<Bindable<V>> binding : new ArrayList<>(bindings)) {
-            if (binding.refersTo(source)) continue;
-
-            final Bindable<V> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            if (bindable instanceof PrecisionConstrainedBindable<?, ?>) {
-                final PrecisionConstrainedBindable<V, T> precisionBindable = (PrecisionConstrainedBindable<V, T>) bindable;
-
-                precisionBindable.setPrecision(current, false, source);
-            }
+    protected void triggerPrecisionChanged(
+            T previous,
+            T current,
+            boolean bypassChecks,
+            boolean updateCurrentValue,
+            boolean propagateToBindings,
+            PrecisionConstrainedBindable<V, T> source
+    ) {
+        if (propagateToBindings || bypassChecks) {
+            propagatePrecision((binding) -> binding.setPrecision(current, updateCurrentValue, source), source);
         }
     }
 
@@ -140,33 +150,23 @@ public abstract class PrecisionConstrainedBindable<V extends Number, T extends N
         T previous = this.defaultPrecision;
         this.defaultPrecision = defaultPrecision;
 
-        triggerDefaultPrecisionChanged(previous, defaultPrecision, true, source);
+        triggerDefaultPrecisionChanged(previous, defaultPrecision, source(source, this));
     }
 
-    protected void triggerDefaultPrecisionChanged(T previous, T current, boolean propagateToBindings, PrecisionConstrainedBindable<V, T> source) {
-        if (propagateToBindings)
-            propagateDefaultPrecisionChanged(previous, current, source);
+    protected void triggerDefaultPrecisionChanged(
+            T previous,
+            T current,
+            PrecisionConstrainedBindable<V, T> source
+    ) {
+        triggerDefaultPrecisionChanged(previous, current, false, true, source);
+    }
+    protected void triggerDefaultPrecisionChanged(T previous, T current, boolean bypassChecks, boolean propagateToBindings, PrecisionConstrainedBindable<V, T> source) {
+        if (propagateToBindings || bypassChecks) {
+            propagatePrecision((binding) -> binding.setDefaultPrecision(current, source), source);
+        }
 
-        if (!previous.equals(current))
+        if (!previous.equals(current) || bypassChecks) {
             defaultPrecisionChanged.execute(new ValueChangedEvent<>(previous, current));
-    }
-
-    protected void propagateDefaultPrecisionChanged(T previous, T current, PrecisionConstrainedBindable<V, T> source) {
-        for (WeakReference<Bindable<V>> binding : new ArrayList<>(bindings)) {
-            if (binding.refersTo(source)) continue;
-
-            final Bindable<V> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            if (bindable instanceof PrecisionConstrainedBindable<?, ?>) {
-                final PrecisionConstrainedBindable<V, T> precisionBindable = (PrecisionConstrainedBindable<V, T>) bindable;
-
-                precisionBindable.setDefaultPrecision(current, source);
-            }
         }
     }
 
@@ -181,16 +181,18 @@ public abstract class PrecisionConstrainedBindable<V extends Number, T extends N
     public void onPrecisionChanged(ValuedAction<T> action, boolean runOnceImmediately) {
         precisionChanged.add(action);
 
-        if (runOnceImmediately)
-            action.invoke(new ValueChangedEvent<>(precision, precision));
+        if (runOnceImmediately) {
+            action.accept(new ValueChangedEvent<>(precision, precision));
+        }
     }
 
     @Override
     public void onDefaultPrecisionChanged(ValuedAction<T> action, boolean runOnceImmediately) {
         defaultPrecisionChanged.add(action);
 
-        if (runOnceImmediately)
-            action.invoke(new ValueChangedEvent<>(defaultPrecision, defaultPrecision));
+        if (runOnceImmediately) {
+            action.accept(new ValueChangedEvent<>(defaultPrecision, defaultPrecision));
+        }
     }
 
     @Override

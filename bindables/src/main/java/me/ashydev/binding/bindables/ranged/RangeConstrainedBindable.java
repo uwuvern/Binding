@@ -8,6 +8,7 @@
 package me.ashydev.binding.bindables.ranged;
 
 import me.ashydev.binding.IBindable;
+import me.ashydev.binding.action.Action;
 import me.ashydev.binding.action.ValuedAction;
 import me.ashydev.binding.action.event.ValueChangedEvent;
 import me.ashydev.binding.action.queue.ValuedActionQueue;
@@ -37,6 +38,14 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
 
     public RangeConstrainedBindable(T min, T max) {
         this(min, min, max);
+    }
+
+    protected void propagateRanged(Action<RangeConstrainedBindable<T>> propagation, RangeConstrainedBindable<T> source) {
+        super.propagate(
+                (binding) -> binding instanceof RangedBindable,
+                (binding) -> propagation.accept((RangedBindable<T>) binding),
+                source
+        );
     }
 
     @SuppressWarnings("unchecked")
@@ -79,51 +88,59 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
         setMinValue(min, true, this);
     }
 
-    protected void setMinValue(T minValue, boolean updateCurrentValue, RangeConstrainedBindable<T> source) {
+    protected void setMinValue(
+            T minValue,
+            boolean updateCurrentValue,
+            RangeConstrainedBindable<T> source
+    ) {
         T previous = min;
-
         this.min = minValue;
-        triggerMinValueChange(previous, source, true);
 
-        if (updateCurrentValue)
+        triggerMinValueChange(previous, minValue, source(source, this));
+
+        if (updateCurrentValue) {
             set(value);
+        }
     }
 
     @Override
     protected void triggerChange() {
         super.triggerChange();
 
-        triggerMinValueChange(this, false);
-        triggerMaxValueChange(this, false);
+        triggerMinValueChange(min, min, this);
+        triggerMaxValueChange(max, max, this);
     }
 
-    protected void triggerMinValueChange(T beforePropagation, RangeConstrainedBindable<T> source, boolean propagateToBindings) {
-        if (propagateToBindings)
-            propagateMinValueChange(source);
-
-        if (!beforePropagation.equals(min))
-            minValueChanged.execute(new ValueChangedEvent<>(beforePropagation, min));
+    protected void triggerMinValueChange(
+            T beforePropagation,
+            T value,
+            RangeConstrainedBindable<T> source
+    ) {
+        triggerMinValueChange(
+                beforePropagation,
+                value,
+                false,
+                true,
+                source
+        );
     }
 
-    protected void triggerMinValueChange(RangeConstrainedBindable<T> source, boolean propagateToBindings) {
-        triggerMinValueChange(min, source, propagateToBindings);
-    }
-
-    protected void propagateMinValueChange(RangeConstrainedBindable<T> source) {
-        for (WeakReference<Bindable<T>> binding : new ArrayList<>(bindings)) {
-            if (binding.refersTo(source)) continue;
-
-            Bindable<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            if (bindable instanceof RangeConstrainedBindable<T> rangeConstrainedBindable) {
-                rangeConstrainedBindable.setMinValue(min, true, this);
-            }
+    protected void triggerMinValueChange(
+            T beforePropagation,
+            T value,
+            boolean bypassChecks,
+            boolean propagateToBindings,
+            RangeConstrainedBindable<T> source
+    ) {
+        if (propagateToBindings || bypassChecks) {
+            propagateRanged(
+                    (binding) -> binding.setMinValue(value, true, source),
+                    source
+            );
         }
+
+        if (!beforePropagation.equals(min) || bypassChecks)
+            minValueChanged.execute(new ValueChangedEvent<>(beforePropagation, min));
     }
 
     @Override
@@ -138,26 +155,52 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
         setMaxValue(max, true, this);
     }
 
-    protected void setMaxValue(T maxValue, boolean updateCurrentValue, RangeConstrainedBindable<T> source) {
+    protected void setMaxValue(
+            T maxValue,
+            boolean updateCurrentValue,
+            RangeConstrainedBindable<T> source
+    ) {
         T previous = max;
-
         this.max = maxValue;
-        triggerMaxValueChange(previous, source, true);
 
-        if (updateCurrentValue)
+        triggerMaxValueChange(previous, maxValue, source(source, this));
+
+        if (updateCurrentValue) {
             set(value);
+        }
     }
 
-    protected void triggerMaxValueChange(T beforePropagation, RangeConstrainedBindable<T> source, boolean propagateToBindings) {
-        if (propagateToBindings)
-            propagateMaxValueChange(source);
+    protected void triggerMaxValueChange(
+            T beforePropagation,
+            T value,
+            RangeConstrainedBindable<T> source
+    ) {
+        triggerMaxValueChange(
+                beforePropagation,
+                value,
+                false,
+                true,
+                source
+        );
+    }
 
-        if (!beforePropagation.equals(max))
+    protected void triggerMaxValueChange(
+            T beforePropagation,
+            T value,
+            boolean bypassChecks,
+            boolean propagateToBindings,
+            RangeConstrainedBindable<T> source
+    ) {
+        if (propagateToBindings || bypassChecks) {
+            propagateRanged(
+                    (binding) -> binding.setMaxValue(value, true, source),
+                    source
+            );
+        }
+
+        if (!beforePropagation.equals(value) || bypassChecks) {
             maxValueChanged.execute(new ValueChangedEvent<>(beforePropagation, max));
-    }
-
-    protected void triggerMaxValueChange(RangeConstrainedBindable<T> source, boolean propagateToBindings) {
-        triggerMaxValueChange(max, source, propagateToBindings);
+        }
     }
 
     protected void propagateMaxValueChange(RangeConstrainedBindable<T> source) {
@@ -309,32 +352,36 @@ public abstract class RangeConstrainedBindable<T extends Number> extends StrongB
     public void onMinChanged(ValuedAction<T> action, boolean runOnceImmediately) {
         minValueChanged.add(action);
 
-        if (runOnceImmediately)
-            action.invoke(new ValueChangedEvent<>(min, min));
+        if (runOnceImmediately) {
+            action.accept(new ValueChangedEvent<>(min, min));
+        }
     }
 
     @Override
     public void onMaxChanged(ValuedAction<T> action, boolean runOnceImmediately) {
         maxValueChanged.add(action);
 
-        if (runOnceImmediately)
-            action.invoke(new ValueChangedEvent<>(max, max));
+        if (runOnceImmediately) {
+            action.accept(new ValueChangedEvent<>(max, max));
+        }
     }
 
     @Override
     public void onDefaultMinChanged(ValuedAction<T> action, boolean runOnceImmediately) {
         defaultMinValueChanged.add(action);
 
-        if (runOnceImmediately)
-            action.invoke(new ValueChangedEvent<>(defaultMin, defaultMin));
+        if (runOnceImmediately) {
+            action.accept(new ValueChangedEvent<>(defaultMin, defaultMin));
+        }
     }
 
     @Override
     public void onDefaultMaxChanged(ValuedAction<T> action, boolean runOnceImmediately) {
         defaultMaxValueChanged.add(action);
 
-        if (runOnceImmediately)
-            action.invoke(new ValueChangedEvent<>(defaultMax, defaultMax));
+        if (runOnceImmediately) {
+            action.accept(new ValueChangedEvent<>(defaultMax, defaultMax));
+        }
     }
 
     @Override

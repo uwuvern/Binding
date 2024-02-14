@@ -14,6 +14,7 @@ import me.ashydev.binding.action.ValuedAction;
 import me.ashydev.binding.action.event.ValueChangedEvent;
 import me.ashydev.binding.action.queue.ActionQueue;
 import me.ashydev.binding.action.queue.ValuedActionQueue;
+import me.ashydev.binding.bindable.list.BindableList;
 import me.ashydev.binding.common.reference.LockedWeakList;
 import me.ashydev.binding.event.map.IMapEvent;
 import me.ashydev.binding.event.map.MapEvent;
@@ -22,6 +23,10 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 
 public class BindableMap<K, V> implements IBindableMap<K, V> {
+    protected static <V> V source(V source, V self) {
+        return source != null ? source : self;
+    }
+
     private transient final WeakReference<BindableMap<K, V>> weakReference = new WeakReference<>(this);
 
     private transient final ActionQueue<MapEvent<K, V>> collectionChanged = new ActionQueue<>();
@@ -54,18 +59,40 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
         this(MapType.HASH, null);
     }
 
+    protected void propagate(Action<BindableMap<K, V>> propagation, BindableMap<K, V> source) {
+        Iterator<WeakReference<BindableMap<K, V>>> iterator = bindings.iterator();
+
+        while (iterator.hasNext()) {
+            WeakReference<BindableMap<K, V>> binding = iterator.next();
+
+            if (binding.refersTo(source)) continue;
+
+            BindableMap<K, V> bindable = binding.get();
+
+            if (bindable == null) {
+                iterator.remove();
+
+                continue;
+            }
+
+            propagation.accept(bindable);
+        }
+    }
+
+
     @Override
     public void onCollectionChanged(Action<MapEvent<K, V>> action, boolean runOnceImmediately) {
         collectionChanged.add(action);
 
-        if (runOnceImmediately)
-            action.invoke(
+        if (runOnceImmediately) {
+            action.accept(
                     new MapEvent<>(
                             MapEvent.Type.ADD,
                             getElements(map),
                             Collections.emptyList()
                     )
             );
+        }
     }
 
     @Override
@@ -79,16 +106,18 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
     }
 
     private boolean checkAlreadyApplied(Set<BindableMap<K, V>> appliedInstances) {
-        if (appliedInstances.contains(this))
+        if (appliedInstances.contains(this)) {
             return true;
+        }
 
         appliedInstances.add(this);
         return false;
     }
 
     private void ensureMutationAllowed() {
-        if (isDisabled())
+        if (isDisabled()) {
             throw new IllegalStateException(String.format("Cannot mutate the %s while it is disabled.", getClass().getSimpleName()));
+        }
     }
 
 
@@ -101,29 +130,16 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
         boolean oldValue = this.disabled;
         disabled = value;
 
-        triggerDisabledChange(source != null ? source : this, oldValue, true, bypassChecks);
+        triggerDisabledChange(oldValue, value, bypassChecks, true, source);
     }
 
-    private void triggerDisabledChange(BindableMap<K, V> source, boolean old, boolean propagate, boolean bypassChecks) {
-        if (propagate)
-            propagateDisabledChanged(source, disabled);
+    private void triggerDisabledChange(boolean beforePropagation, boolean value, boolean bypassChecks, boolean propagateToBindings, BindableMap<K, V> source) {
+        if (propagateToBindings || bypassChecks) {
+            propagate((bindable) -> bindable.setDisabled(disabled, bypassChecks, source), source);
+        }
 
-        if (old != disabled)
-            disabledChanged.execute(new ValueChangedEvent<>(old, disabled));
-    }
-
-    private void propagateDisabledChanged(BindableMap<K, V> source, boolean value) {
-        for (WeakReference<BindableMap<K, V>> binding : new ArrayList<>(bindings)) {
-            if (binding.refersTo(source)) continue;
-
-            BindableMap<K, V> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.setDisabled(value);
+        if (beforePropagation != value || bypassChecks) {
+            disabledChanged.execute(new ValueChangedEvent<>(bypassChecks, value));
         }
     }
 
@@ -143,8 +159,9 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
     public void onDisabledChanged(ValuedAction<Boolean> action, boolean runOnceImmediately) {
         disabledChanged.add(action);
 
-        if (runOnceImmediately)
-            action.invoke(new ValueChangedEvent<>(disabled, disabled));
+        if (runOnceImmediately) {
+            action.accept(new ValueChangedEvent<>(disabled, disabled));
+        }
     }
 
     @Override
@@ -345,16 +362,7 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
 
         MapEvent.Type type = oldValue == null ? MapEvent.Type.ADD : MapEvent.Type.REPLACE;
 
-        for (WeakReference<BindableMap<K, V>> binding : new ArrayList<>(bindings)) {
-            final BindableMap<K, V> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.put(key, value, appliedInstances);
-        }
+        propagate((bindable) -> bindable.put(key, value, appliedInstances), this);
 
         collectionChanged.execute(
                 new MapEvent<>(
@@ -382,16 +390,7 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
 
         V oldValue = map.remove(key);
 
-        for (WeakReference<BindableMap<K, V>> binding : new ArrayList<>(bindings)) {
-            final BindableMap<K, V> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.remove(key, appliedInstances);
-        }
+        propagate((bindable) -> bindable.remove(key, appliedInstances), this);
 
         collectionChanged.execute(
                 new MapEvent<>(
@@ -418,16 +417,7 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
 
         map.putAll(m);
 
-        for (WeakReference<BindableMap<K, V>> binding : new ArrayList<>(bindings)) {
-            final BindableMap<K, V> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.putAll(m, appliedInstances);
-        }
+        propagate((bindable) -> bindable.putAll(m, appliedInstances), this);
 
         collectionChanged.execute(
                 new MapEvent<>(
@@ -451,16 +441,7 @@ public class BindableMap<K, V> implements IBindableMap<K, V> {
 
         map.clear();
 
-        for (WeakReference<BindableMap<K, V>> binding : new ArrayList<>(bindings)) {
-            final BindableMap<K, V> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.clear(appliedInstances);
-        }
+        propagate((bindable) -> bindable.clear(appliedInstances), this);
 
         collectionChanged.execute(
                 new MapEvent<>(

@@ -10,10 +10,10 @@ package me.ashydev.binding.action;
 import me.ashydev.binding.common.lang.types.Void;
 
 public interface VoidAction extends Action<Void> {
-    void invoke();
+    void accept();
 
     @Override
-    default void invoke(Void value) {
-        invoke();
+    default void accept(Void value) {
+        accept();
     }
 }

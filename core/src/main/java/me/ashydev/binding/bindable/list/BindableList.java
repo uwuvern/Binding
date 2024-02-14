@@ -14,14 +14,20 @@ import me.ashydev.binding.action.ValuedAction;
 import me.ashydev.binding.action.event.ValueChangedEvent;
 import me.ashydev.binding.action.queue.ActionQueue;
 import me.ashydev.binding.action.queue.ValuedActionQueue;
+import me.ashydev.binding.bindable.Bindable;
 import me.ashydev.binding.common.reference.LockedWeakList;
 import me.ashydev.binding.event.collection.CollectionEvent;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 public class BindableList<T> implements IBindableList<T> {
+    protected static <V> V source(V source, V self) {
+        return source != null ? source : self;
+    }
+
     private transient final WeakReference<BindableList<T>> weakReference = new WeakReference<>(this);
 
     private transient final ActionQueue<CollectionEvent<T>> collectionChanged = new ActionQueue<>();
@@ -42,12 +48,32 @@ public class BindableList<T> implements IBindableList<T> {
         this(null);
     }
 
+    protected void propagate(Action<BindableList<T>> propagation, BindableList<T> source) {
+        Iterator<WeakReference<BindableList<T>>> iterator = bindings.iterator();
+
+        while (iterator.hasNext()) {
+            WeakReference<BindableList<T>> binding = iterator.next();
+
+            if (binding.refersTo(source)) continue;
+
+            BindableList<T> bindable = binding.get();
+
+            if (bindable == null) {
+                iterator.remove();
+
+                continue;
+            }
+
+            propagation.accept(bindable);
+        }
+    }
+
     @Override
     public void onCollectionChanged(Action<CollectionEvent<T>> action, boolean runOnceImmediately) {
         collectionChanged.add(action);
 
-        if (runOnceImmediately)
-            action.invoke(
+        if (runOnceImmediately) {
+            action.accept(
                     new CollectionEvent<>(CollectionEvent.Type.ADD,
                             collection.stream()
                                     .map(e -> new CollectionEvent.Element<>(e, collection.indexOf(e)))
@@ -55,6 +81,7 @@ public class BindableList<T> implements IBindableList<T> {
                             Collections.emptyList()
                     )
             );
+        }
     }
 
     @Override
@@ -74,16 +101,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         T previous = collection.set(index, element);
 
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.set(index, element, appliedInstances);
-        }
+        propagate((BindableList<T> bindable) -> bindable.set(index, element, appliedInstances), this);
 
         collectionChanged.execute(
                 new CollectionEvent<>(CollectionEvent.Type.REPLACE,
@@ -111,16 +129,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         collection.add(element);
 
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.add(element, appliedInstances);
-        }
+        propagate((BindableList<T> bindable) -> bindable.add(element, appliedInstances), this);
 
         collectionChanged.execute(
                 new CollectionEvent<>(CollectionEvent.Type.ADD,
@@ -148,16 +157,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         collection.clear();
 
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.clear(appliedInstances);
-        }
+        propagate((BindableList<T> bindable) -> bindable.clear(appliedInstances), this);
 
         collectionChanged.execute(
                 new CollectionEvent<>(CollectionEvent.Type.REMOVE,
@@ -187,16 +187,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         T removed = collection.remove(index);
 
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.remove(o, appliedInstances);
-        }
+        propagate((BindableList<T> bindable) -> bindable.remove(o, appliedInstances), this);
 
         collectionChanged.execute(
                 new CollectionEvent<>(CollectionEvent.Type.REMOVE,
@@ -247,16 +238,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         boolean changed = collection.addAll(c);
 
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.addAll(c, appliedInstances);
-        }
+        propagate((BindableList<T> bindable) -> bindable.addAll(c, appliedInstances), this);
 
         collectionChanged.execute(
                 new CollectionEvent<>(CollectionEvent.Type.ADD,
@@ -282,16 +264,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         boolean changed = collection.addAll(index, c);
 
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.addAll(index, c, appliedInstances);
-        }
+        propagate((BindableList<T> bindable) -> bindable.addAll(index, c, appliedInstances), this);
 
         collectionChanged.execute(
                 new CollectionEvent<>(CollectionEvent.Type.ADD,
@@ -318,16 +291,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         boolean changed = collection.removeAll(c);
 
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.removeAll(c, appliedInstances);
-        }
+        propagate((BindableList<T> bindable) -> bindable.removeAll(c, appliedInstances), this);
 
         collectionChanged.execute(
                 new CollectionEvent<>(CollectionEvent.Type.REMOVE,
@@ -356,16 +320,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         boolean changed = collection.retainAll(c);
 
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.retainAll(c, appliedInstances);
-        }
+        propagate((BindableList<T> bindable) -> bindable.retainAll(c, appliedInstances), this);
 
         collectionChanged.execute(
                 new CollectionEvent<>(CollectionEvent.Type.REMOVE,
@@ -396,16 +351,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         collection.add(index, element);
 
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.add(index, element, appliedInstances);
-        }
+        propagate((BindableList<T> bindable) -> bindable.add(index, element, appliedInstances), this);
 
         collectionChanged.execute(
                 new CollectionEvent<>(CollectionEvent.Type.ADD,
@@ -429,16 +375,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         T removed = collection.remove(index);
 
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.remove(index, appliedInstances);
-        }
+        propagate((BindableList<T> bindable) -> bindable.remove(index, appliedInstances), this);
 
         collectionChanged.execute(
                 new CollectionEvent<>(CollectionEvent.Type.REMOVE,
@@ -489,16 +426,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         collection.replaceAll(operator);
 
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.replaceAll(operator, appliedInstances);
-        }
+        propagate((BindableList<T> bindable) -> bindable.replaceAll(operator, appliedInstances), this);
 
         collectionChanged.execute(
                 new CollectionEvent<>(CollectionEvent.Type.REPLACE,
@@ -524,16 +452,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         collection.sort(c);
 
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.sort(c, appliedInstances);
-        }
+        propagate((BindableList<T> bindable) -> bindable.sort(c, appliedInstances), this);
 
         collectionChanged.execute(
                 new CollectionEvent<>(CollectionEvent.Type.REPLACE,
@@ -564,16 +483,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         collection.addFirst(t);
 
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.addFirst(t, appliedInstances);
-        }
+        propagate((BindableList<T> bindable) -> bindable.addFirst(t, appliedInstances), this);
 
         collectionChanged.execute(
                 new CollectionEvent<>(CollectionEvent.Type.ADD,
@@ -597,16 +507,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         collection.add(t);
 
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.addLast(t, appliedInstances);
-        }
+        propagate((BindableList<T> bindable) -> bindable.addLast(t, appliedInstances), this);
 
         collectionChanged.execute(
                 new CollectionEvent<>(CollectionEvent.Type.ADD,
@@ -641,16 +542,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         T removed = collection.removeFirst();
 
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.removeFirst(appliedInstances);
-        }
+        propagate((BindableList<T> bindable) -> bindable.removeFirst(appliedInstances), this);
 
         collectionChanged.execute(
                 new CollectionEvent<>(CollectionEvent.Type.REMOVE,
@@ -676,16 +568,7 @@ public class BindableList<T> implements IBindableList<T> {
 
         T removed = collection.removeLast();
 
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.removeLast(appliedInstances);
-        }
+        propagate((BindableList<T> bindable) -> bindable.removeLast(appliedInstances), this);
 
         collectionChanged.execute(
                 new CollectionEvent<>(CollectionEvent.Type.REMOVE,
@@ -720,16 +603,18 @@ public class BindableList<T> implements IBindableList<T> {
     }
 
     private boolean checkAlreadyApplied(Set<BindableList<T>> appliedInstances) {
-        if (appliedInstances.contains(this))
+        if (appliedInstances.contains(this)) {
             return true;
+        }
 
         appliedInstances.add(this);
         return false;
     }
 
     private void ensureMutationAllowed() {
-        if (isDisabled())
+        if (isDisabled()) {
             throw new IllegalStateException(String.format("Cannot mutate the %s while it is disabled.", getClass().getSimpleName()));
+        }
     }
 
 
@@ -742,31 +627,39 @@ public class BindableList<T> implements IBindableList<T> {
         boolean oldValue = this.disabled;
         disabled = value;
 
-        triggerDisabledChange(source != null ? source : this, oldValue, true, bypassChecks);
+        triggerDisabledChange(oldValue, value, source(source, this));
     }
 
-    protected void triggerDisabledChange(BindableList<T> source, boolean old, boolean propagate, boolean bypassChecks) {
-        if (propagate)
-            propagateDisabledChanged(source, disabled);
-
-        if (old != disabled)
-            disabledChanged.execute(new ValueChangedEvent<>(old, disabled));
+    protected void triggerDisabledChange(
+            boolean beforePropagation,
+            boolean value,
+            BindableList<T> source
+    ) {
+        triggerDisabledChange(
+                beforePropagation,
+                value,
+                false,
+                true,
+                source
+        );
     }
 
-    protected void propagateDisabledChanged(BindableList<T> source, boolean value) {
-        for (WeakReference<BindableList<T>> binding : new ArrayList<>(bindings)) {
-            if (binding.refersTo(source)) continue;
+    protected void triggerDisabledChange(
+            boolean beforePropagation,
+            boolean value,
+            boolean bypassChecks,
+            boolean propagateToBindings,
+            BindableList<T> source
+    ) {
+        if (propagateToBindings || bypassChecks) {
+            propagate((BindableList<T> bindable) -> bindable.setDisabled(value, bypassChecks, source), source);
+        }
 
-            BindableList<T> bindable = binding.get();
-
-            if (bindable == null) {
-                bindings.remove(binding);
-                continue;
-            }
-
-            bindable.setDisabled(value);
+        if (beforePropagation != value || bypassChecks) {
+            disabledChanged.execute(new ValueChangedEvent<>(beforePropagation, value));
         }
     }
+
 
     @Override
     public boolean isDisabled() {
@@ -784,8 +677,9 @@ public class BindableList<T> implements IBindableList<T> {
     public void onDisabledChanged(ValuedAction<Boolean> action, boolean runOnceImmediately) {
         disabledChanged.add(action);
 
-        if (runOnceImmediately)
-            action.invoke(new ValueChangedEvent<>(disabled, disabled));
+        if (runOnceImmediately) {
+            action.accept(new ValueChangedEvent<>(disabled, disabled));
+        }
     }
 
     @Override

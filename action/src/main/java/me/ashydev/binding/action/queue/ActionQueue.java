@@ -27,8 +27,7 @@ public class ActionQueue<E> extends ArrayDeque<Action<E>> implements IExecutable
 
     @Override
     public boolean execute(E event) {
-        for (Action<E> e : this)
-            e.invoke(event);
+        for (Action<E> e : this) e.accept(event);
 
         return true;
     }
